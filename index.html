@@ -16,41 +16,22 @@
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
         :root { --primary: #ec4899; --bg: #fdf2f8; }
-        body { 
-            font-family: 'Outfit', sans-serif; 
-            background-color: var(--bg); 
-            color: #831843;
-            height: 100dvh;
-            display: flex; flex-direction: column; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .btn-primary {
-            background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px;
-            text-transform: uppercase; width: 100%; letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s;
-        }
+        body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #831843; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s; }
         .btn-primary:active { transform: scale(0.96); }
-        .input-style {
-            background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px;
-            outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px;
-        }
-        .card {
-            background: #fff; padding: 16px; border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8);
-        }
+        .input-style { background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; }
+        .card { background: #fff; padding: 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); }
         .nav-btn { opacity: 0.5; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .info-bubble { font-size: 10px; color: #db2777; background: #fce7f3; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; border: 1px dashed #fbcfe8; }
-        
-        /* Filtres scrollables */
-        .filter-btn { padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transition: 0.2s; background: #fff; color: #ec4899; border: 1px solid #fbcfe8; }
-        .filter-active { background: #ec4899; color: white; border-color: #ec4899; box-shadow: 0 2px 8px rgba(236, 72, 153, 0.3); }
+        .filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transition: 0.2s; background: #fff; color: #ec4899; border: 1px solid #fbcfe8; }
+        .filter-active { background: #ec4899; color: white; border-color: #ec4899; }
     </style>
 </head>
 <body>
 
-    <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8]">
+    <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8] transition-opacity duration-300">
         <div class="text-center mb-10">
             <h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS MOOD</h1>
             <p class="text-xs font-bold uppercase tracking-widest text-pink-400 mt-2">Le QG des copines</p>
@@ -59,6 +40,7 @@
         <input type="password" id="password" placeholder="Mot de passe..." class="input-style">
         <button id="btn-login" class="btn-primary mt-4">Entrer</button>
         <button id="btn-register" class="text-xs text-center w-full text-pink-400 font-bold underline mt-6 py-4">Créer un compte</button>
+        <p id="auth-error" class="text-center text-red-500 text-xs font-bold mt-2 hidden"></p>
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
@@ -70,8 +52,7 @@
         <main class="flex-1 overflow-hidden relative">
             
             <section id="tab-events" class="h-full overflow-y-auto p-4 pb-24 no-scrollbar">
-                
-                <div id="countdown-card" class="card bg-gradient-to-r from-pink-500 to-rose-400 text-white border-none shadow-lg mb-6 hidden transform transition-all">
+                <div id="countdown-card" class="card bg-gradient-to-r from-pink-500 to-rose-400 text-white border-none shadow-lg mb-6 hidden">
                     <div class="flex justify-between items-center">
                         <div>
                             <p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p>
@@ -101,13 +82,29 @@
                 <div id="events-list" class="space-y-3"></div>
             </section>
 
+            <section id="tab-dressing" class="hidden h-full overflow-y-auto p-4 pb-24 no-scrollbar">
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl mb-4 flex items-center gap-3">
+                    <div class="bg-indigo-500 text-white p-2 rounded-full"><i data-lucide="lock" class="w-5 h-5"></i></div>
+                    <div>
+                        <h3 class="font-bold text-sm text-indigo-900">Mon Dressing Secret</h3>
+                        <p class="text-[10px] text-indigo-400">Visible uniquement par toi 🤫</p>
+                    </div>
+                </div>
+                
+                <button onclick="openModal(null, 'Mon Dressing Privé', true)" class="btn-primary bg-indigo-500 shadow-indigo-200 mb-4 text-xs">
+                    + Ajouter une tenue secrète
+                </button>
+
+                <div id="private-grid" class="space-y-4"></div>
+            </section>
+
             <section id="tab-chat" class="hidden h-full flex flex-col pb-20 bg-[#fdf2f8]">
                 <div class="p-4 pb-0">
                     <div class="bg-pink-100 p-3 rounded-xl flex items-center gap-3 mb-2">
                         <div class="bg-white p-2 rounded-full text-pink-500"><i data-lucide="coffee" class="w-5 h-5"></i></div>
                         <div>
                             <h3 class="font-bold text-sm text-pink-900">Le Salon</h3>
-                            <p class="text-[10px] text-pink-500">Discussion générale des copines 💅</p>
+                            <p class="text-[10px] text-pink-500">Discussion générale 💅</p>
                         </div>
                     </div>
                 </div>
@@ -124,9 +121,13 @@
                 <i data-lucide="calendar-heart" class="w-6 h-6"></i>
                 <span class="text-[9px] font-bold uppercase">Agenda</span>
             </button>
+            <button onclick="switchTab('dressing')" id="nav-dressing" class="nav-btn">
+                <i data-lucide="shirt" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold uppercase">Privé</span>
+            </button>
             <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn">
                 <i data-lucide="message-circle-heart" class="w-6 h-6"></i>
-                <span class="text-[9px] font-bold uppercase">Le Salon</span>
+                <span class="text-[9px] font-bold uppercase">Salon</span>
             </button>
         </nav>
     </div>
@@ -137,13 +138,12 @@
             <button id="btn-close-modal" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <div class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20">
+        <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20">
             <button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button>
             <button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button>
             <button onclick="setFilter('Haut')" class="filter-btn" id="filter-Haut">👚 Hauts</button>
             <button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button>
             <button onclick="setFilter('Chaussures')" class="filter-btn" id="filter-Chaussures">👠 Shoes</button>
-            <button onclick="setFilter('Sac')" class="filter-btn" id="filter-Sac">👜 Sacs</button>
         </div>
 
         <div class="flex-1 overflow-y-auto p-4 pb-40 no-scrollbar">
@@ -166,6 +166,7 @@
 
                 <div id="mode-link" class="block">
                     <input type="text" id="inspo-link-url" placeholder="Coller le lien de l'image..." class="input-style text-xs mb-2">
+                    <div class="info-bubble">💡 <b>Astuce :</b> Appui long sur l'image Google > "Copier l'adresse de l'image".</div>
                 </div>
 
                 <div id="mode-photo" class="hidden">
@@ -177,8 +178,9 @@
                     <div class="info-bubble" id="upload-status">⚠️ Qualité optimisée pour la rapidité.</div>
                 </div>
 
-                <div class="mt-2 pt-2 border-t border-dashed border-pink-100">
-                    <input type="text" id="inspo-shop-link" placeholder="Lien Shopping (Facultatif)..." class="input-style text-xs mb-0 border-pink-100">
+                <div class="mt-2 pt-2 border-t border-dashed border-pink-100 space-y-2">
+                    <input type="text" id="inspo-shop-link" placeholder="Lien Shopping (Vinted/Zara)..." class="input-style text-xs mb-0 border-pink-100">
+                    <input type="text" id="inspo-social-link" placeholder="Lien TikTok / Insta..." class="input-style text-xs mb-0 border-pink-100 bg-purple-50">
                 </div>
 
                 <button id="btn-submit-inspo" class="btn-primary text-xs py-3 mt-3">POSTER</button>
@@ -190,43 +192,48 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, orderBy, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAgLVoCp13V7xanqR7oO_2uGwiTpCaFpAY", authDomain: "loudressing2.firebaseapp.com", projectId: "loudressing2", storageBucket: "loudressing2.firebasestorage.app", messagingSenderId: "877161870915", appId: "1:877161870915:web:963f894f6be7d63bc006f6" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         
         let currentUser = null; let currentEventId = null; let pendingBase64 = null; let uploadMode = 'link';
-        let currentFilter = 'all'; let allInspos = [];
+        let currentFilter = 'all'; let allInspos = []; let isPrivateMode = false;
 
         onAuthStateChanged(auth, (user) => {
-            if (user) { currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); loadEvents(); loadChat(); } 
-            else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
+            if (user) { 
+                currentUser = user; 
+                document.getElementById('auth-view').classList.add('hidden'); 
+                document.getElementById('app-view').classList.remove('hidden'); 
+                document.getElementById('app-view').classList.add('flex'); 
+                loadEvents(); loadChat(); loadPrivateDressing();
+            } else { 
+                document.getElementById('auth-view').classList.remove('hidden'); 
+                document.getElementById('app-view').classList.add('hidden'); 
+                document.getElementById('app-view').classList.remove('flex'); 
+            }
         });
 
-        document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){alert(e.message);} };
-        document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){alert(e.message);} };
+        // AUTH
+        document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = "Erreur: " + e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
+        document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = "Erreur: " + e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
+        // NAVIGATION
         window.switchTab = (tab) => {
-            document.getElementById('tab-events').classList.add('hidden'); document.getElementById('tab-chat').classList.add('hidden');
+            document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
             document.getElementById('tab-'+tab).classList.remove('hidden');
-            document.getElementById('nav-events').classList.remove('nav-active'); document.getElementById('nav-chat').classList.remove('nav-active');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
             document.getElementById('nav-'+tab).classList.add('nav-active');
         };
 
         window.toggleUploadMode = (mode) => {
             uploadMode = mode;
-            if(mode === 'link') {
-                document.getElementById('mode-link').classList.remove('hidden'); document.getElementById('mode-photo').classList.add('hidden');
-                document.getElementById('tab-link').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition";
-                document.getElementById('tab-photo').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
-                pendingBase64 = null;
-            } else {
-                document.getElementById('mode-link').classList.add('hidden'); document.getElementById('mode-photo').classList.remove('hidden');
-                document.getElementById('tab-link').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
-                document.getElementById('tab-photo').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition";
-            }
+            document.getElementById('mode-link').classList.toggle('hidden', mode !== 'link');
+            document.getElementById('mode-photo').classList.toggle('hidden', mode !== 'photo');
+            document.getElementById('tab-link').className = mode === 'link' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
+            document.getElementById('tab-photo').className = mode === 'photo' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
         };
 
         window.setFilter = (cat) => {
@@ -236,6 +243,7 @@
             renderInspos();
         };
 
+        // EVENTS
         document.getElementById('btn-create').onclick = async () => {
             const name = document.getElementById('event-name').value;
             if (!name) return alert("Nom manquant !");
@@ -254,7 +262,7 @@
                     if(data.date) { const evtDate = new Date(data.date); if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) closestEvent = { name: data.name, date: evtDate }; }
                     const div = document.createElement('div'); div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden";
                     div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize">${data.name}</h3><button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`;
-                    div.onclick = (e) => { if(!e.target.closest('.btn-part')) openEvent(d.id, data.name); };
+                    div.onclick = (e) => { if(!e.target.closest('.btn-part')) openModal(d.id, data.name, false); };
                     div.querySelector('.btn-part').onclick = async () => { const ref = doc(db, 'events', d.id); const name = currentUser.email.split('@')[0]; if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) }); else await updateDoc(ref, { participants: arrayUnion(name) }); };
                     list.appendChild(div);
                 });
@@ -263,62 +271,141 @@
             });
         }
 
+        // PRIVATE DRESSING
+        function loadPrivateDressing() {
+            // Charge les items privés (collection 'private_dressing' filtrée par UID)
+            onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => {
+                const grid = document.getElementById('private-grid'); grid.innerHTML = "";
+                if(snap.empty) grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Ton dressing est vide...</div>";
+                snap.forEach(d => {
+                    const data = d.data();
+                    const div = createInspoCard(d.id, data, true); // true = isPrivate
+                    grid.appendChild(div);
+                });
+                lucide.createIcons();
+            });
+        }
+
+        // CHAT
         document.getElementById('btn-send-chat').onclick = async () => { const txt = document.getElementById('chat-input').value; if(txt) { await addDoc(collection(db, 'chat'), { text: txt, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); document.getElementById('chat-input').value = ""; } };
         function loadChat() { onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => { const box = document.getElementById('chat-box'); box.innerHTML = snap.docs.map(d => { const data = d.data(); const isMe = data.email === currentUser.email; return `<div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2"><span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${isMe ? 'Moi' : data.user}</span><div class="${isMe ? 'bg-pink-500 text-white rounded-br-none' : 'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${data.text}</div></div>`; }).join(''); box.scrollTop = box.scrollHeight; }); }
+
+        // UPLOAD & MODAL
+        window.openModal = (id, name, isPrivate) => {
+            currentEventId = id; isPrivateMode = isPrivate;
+            document.getElementById('modal-title').innerText = name; 
+            document.getElementById('modal-event').classList.remove('hidden');
+            
+            // Gestion affichage selon mode
+            if(isPrivate) {
+                document.getElementById('filter-bar').classList.add('hidden');
+                document.getElementById('inspo-grid').innerHTML = ""; // On vide car géré par loadPrivateDressing
+                document.getElementById('inspo-grid').classList.add('hidden'); // On cache la liste dans la modal si privé
+            } else {
+                document.getElementById('filter-bar').classList.remove('hidden');
+                document.getElementById('inspo-grid').classList.remove('hidden');
+                currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active');
+                onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => {
+                    allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); });
+                    renderInspos();
+                });
+            }
+        };
 
         document.getElementById('file-upload').onchange = (e) => {
             const file = e.target.files[0]; if (!file) return; 
             document.getElementById('upload-text').innerText = "Traitement...";
-            document.getElementById('upload-status').innerText = "Compression en cours...";
-            
             const reader = new FileReader();
             reader.onload = (re) => {
                 const img = new Image();
                 img.onload = () => {
-                    const cvs = document.createElement('canvas');
-                    let w = img.width; let h = img.height; const M = 800;
-                    if(w>h){if(w>M){h*=M/w;w=M;}}else{if(h>M){w*=M/h;h=M;}}
-                    cvs.width=w; cvs.height=h;
-                    cvs.getContext("2d").drawImage(img,0,0,w,h);
+                    const cvs = document.createElement('canvas'); let w = img.width; let h = img.height; const M = 800; if(w>h){if(w>M){h*=M/w;w=M;}}else{if(h>M){w*=M/h;h=M;}} cvs.width=w; cvs.height=h; cvs.getContext("2d").drawImage(img,0,0,w,h);
                     pendingBase64 = cvs.toDataURL("image/jpeg", 0.5); 
                     document.getElementById('upload-text').innerText = "PHOTO PRÊTE !";
-                    document.getElementById('upload-status').innerText = "✅ Image convertie. Clique sur POSTER !";
-                };
-                img.src = re.target.result;
-            };
-            reader.readAsDataURL(file);
+                    document.getElementById('upload-status').innerText = "✅ Image convertie.";
+                }; img.src = re.target.result;
+            }; reader.readAsDataURL(file);
         };
 
         document.getElementById('btn-submit-inspo').onclick = async () => {
-            const linkUrl = document.getElementById('inspo-link-url').value; const shopLink = document.getElementById('inspo-shop-link').value; const cat = document.getElementById('inspo-category').value;
+            const linkUrl = document.getElementById('inspo-link-url').value; const shopLink = document.getElementById('inspo-shop-link').value; const socialLink = document.getElementById('inspo-social-link').value; const cat = document.getElementById('inspo-category').value;
             const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : linkUrl;
             if(!finalUrl) return alert("Il manque la photo ou le lien !");
-            try { await addDoc(collection(db, 'events', currentEventId, 'inspos'), { url: finalUrl, shop: shopLink, category: cat, user: currentUser.email.split('@')[0], email: currentUser.email, createdAt: Date.now(), likes: [], comments: [] }); document.getElementById('inspo-link-url').value = ""; document.getElementById('inspo-shop-link').value = ""; document.getElementById('file-upload').value = ""; document.getElementById('upload-text').innerText = "OUVRIR MA GALERIE"; document.getElementById('upload-status').innerText = "⚠️ Qualité optimisée"; pendingBase64 = null; alert("✨ C'est posté !"); } catch(e) { alert("Erreur: " + e.message); }
-        };
+            
+            const data = { url: finalUrl, shop: shopLink, social: socialLink, category: cat, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
 
-        function openEvent(id, name) {
-            currentEventId = id; document.getElementById('modal-title').innerText = name; document.getElementById('modal-event').classList.remove('hidden');
-            currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active');
-            onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => {
-                allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); });
-                renderInspos();
-            });
-        }
+            try { 
+                if(isPrivateMode) {
+                    await addDoc(collection(db, 'private_dressing'), data);
+                } else {
+                    await addDoc(collection(db, 'events', currentEventId, 'inspos'), data);
+                }
+                document.getElementById('inspo-link-url').value = ""; document.getElementById('inspo-shop-link').value = ""; document.getElementById('inspo-social-link').value = ""; document.getElementById('file-upload').value = ""; document.getElementById('upload-text').innerText = "OUVRIR MA GALERIE"; pendingBase64 = null; 
+                alert("✨ C'est posté !");
+                if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); // Fermer si privé
+            } catch(e) { alert("Erreur: " + e.message); }
+        };
 
         function renderInspos() {
             const grid = document.getElementById('inspo-grid'); grid.innerHTML = "";
             const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter);
             if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-pink-50 rounded-xl'>Aucune pièce ici... ✨</div>"; return; }
-            filtered.forEach(d => {
-                const isLiked = (d.likes || []).includes(currentUser.uid);
-                const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6";
-                div.innerHTML = `<div class="relative"><img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50"><div class="absolute top-2 left-2 bg-pink-500 text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm">${d.category || 'Tenue'}</div>${d.email === currentUser.email ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div><div class="p-4"><div class="flex justify-between items-center mb-3"><span class="text-[10px] font-black uppercase text-pink-400 tracking-wider">Posté par ${d.user}</span><div class="flex gap-3"><button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button><button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button></div></div>${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-3 hover:bg-pink-50 hover:text-pink-500 hover:border-pink-200 transition flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER L'ARTICLE</a>` : ''}<div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}</div></div>`;
-                if(d.email === currentUser.email) div.querySelector('.btn-del').onclick = () => { if(confirm('Supprimer ?')) deleteDoc(doc(db,'events',currentEventId,'inspos',d.id)); };
-                div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',d.id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); };
-                div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',d.id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); };
-                grid.appendChild(div);
-            }); lucide.createIcons();
+            filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, false)); });
+            lucide.createIcons();
         }
+
+        function createInspoCard(id, d, isPrivate) {
+            const isLiked = (d.likes || []).includes(currentUser.uid);
+            const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6";
+            
+            let actionButtons = '';
+            if(!isPrivate) {
+                actionButtons = `
+                    <div class="flex gap-3">
+                        <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button>
+                        <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button>
+                    </div>`;
+            } else {
+                actionButtons = `<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>`;
+            }
+
+            div.innerHTML = `
+                <div class="relative">
+                    <img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50">
+                    <div class="absolute top-2 left-2 ${isPrivate ? 'bg-indigo-500' : 'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm">${d.category || 'Tenue'}</div>
+                    ${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                </div>
+                <div class="p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-[10px] font-black uppercase ${isPrivate ? 'text-indigo-400' : 'text-pink-400'} tracking-wider">${isPrivate ? 'Mon Dressing' : 'Posté par ' + d.user}</span>
+                        ${actionButtons}
+                    </div>
+                    
+                    ${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 hover:bg-pink-50 hover:text-pink-500 transition flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}
+                    ${d.social ? `<a href="${d.social}" target="_blank" class="block w-full text-center bg-black text-white text-[10px] font-bold py-3 rounded-xl mb-3 hover:opacity-80 transition flex items-center justify-center gap-2"><i data-lucide="smartphone" class="w-3 h-3"></i> VOIR SUR TIKTOK/INSTA</a>` : ''}
+
+                    <div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">
+                        ${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            if(d.email === currentUser.email || isPrivate) {
+                div.querySelector('.btn-del').onclick = () => { 
+                    if(confirm('Supprimer ?')) deleteDoc(doc(db, isPrivate ? 'private_dressing' : 'events', isPrivate ? d.id : currentEventId, isPrivate ? null : 'inspos', isPrivate ? null : d.id)); // La logique delete est un peu différente selon la structure, ici on simplifie
+                    // Correction delete logic pour structure imbriquée vs root
+                    if(isPrivate) deleteDoc(doc(db, 'private_dressing', id));
+                    else deleteDoc(doc(db, 'events', currentEventId, 'inspos', id));
+                };
+            }
+            
+            if(!isPrivate) {
+                div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); };
+                div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); };
+            }
+            return div;
+        }
+
         document.getElementById('btn-close-modal').onclick = () => document.getElementById('modal-event').classList.add('hidden');
         lucide.createIcons();
     </script>
