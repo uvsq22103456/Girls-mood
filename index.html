@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>GIRLS MOOD V6</title>
+    <title>GIRLS MOOD</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
@@ -14,95 +14,81 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+        
         :root { --bg: #f8fafc; --text: #0f172a; --primary: #ec4899; }
-        [data-theme="dark"] { --bg: #0f172a; --text: #f8fafc; --primary: #f472b6; }
-        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); height: 100dvh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* Boutons et Champs */
+        .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 15px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 1px; transition: transform 0.1s; cursor: pointer; }
+        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .input-style { background: #f1f5f9; border: 1px solid rgba(0,0,0,0.05); width: 100%; padding: 15px; border-radius: 14px; outline: none; margin-bottom: 10px; font-weight: 600; }
+        
+        /* Cartes */
+        .card { background: white; padding: 15px; border-radius: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 10px; border: 1px solid rgba(0,0,0,0.02); }
         .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        [data-theme="dark"] .glass { background: rgba(30,41,59,0.95); border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .input-style { background: rgba(0,0,0,0.05); border: 1px solid rgba(0,0,0,0.1); width: 100%; padding: 12px; border-radius: 12px; color: var(--text); outline: none; }
-        [data-theme="dark"] .input-style { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
-        .card { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 10px; }
-        [data-theme="dark"] .card { background: rgba(255,255,255,0.05); }
-        .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 12px; border-radius: 12px; text-transform: uppercase; width: 100%; }
-        .chat-bubble { max-width: 75%; padding: 10px; border-radius: 14px; font-size: 13px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <section id="auth-view" class="flex flex-col justify-center px-8 h-full space-y-4 absolute inset-0 bg-[var(--bg)] z-50">
-        <h1 class="text-4xl font-black italic text-center">GIRLS<span style="color:var(--primary)">MOOD</span></h1>
-        <p class="text-center text-xs opacity-50">Version Diagnostique V6</p>
-        <input type="email" id="email" placeholder="Email" class="input-style">
-        <input type="password" id="password" placeholder="Mot de passe" class="input-style">
-        <button onclick="login()" class="btn-primary">Se connecter</button>
-        <button onclick="register()" class="text-xs text-center underline opacity-50">Créer un compte</button>
+    <section id="auth-view" class="flex flex-col justify-center px-8 h-full absolute inset-0 bg-[var(--bg)] z-50 transition-opacity duration-500">
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-black italic tracking-tighter">GIRLS<span style="color:var(--primary)">MOOD</span></h1>
+            <p class="text-xs opacity-40 uppercase tracking-widest mt-2">Loudressing 2.0</p>
+        </div>
+
+        <input type="email" id="email" placeholder="Email..." class="input-style">
+        <input type="password" id="password" placeholder="Mot de passe..." class="input-style">
+        
+        <button onclick="handleLogin()" class="btn-primary mt-2">Se connecter</button>
+        <button onclick="handleRegister()" class="text-xs text-center w-full opacity-50 underline mt-6 py-2">Créer un nouveau compte</button>
+        
+        <p id="error-msg" class="text-red-500 text-xs text-center mt-4 font-bold hidden"></p>
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
-        <header class="p-4 glass flex justify-between items-center z-10">
-            <h2 class="font-black italic">GIRLS<span style="color:var(--primary)">MOOD</span></h2>
-            <div class="flex gap-2">
-                <button onclick="toggleTheme()" id="theme-btn" class="text-xl">🌙</button>
-                <button onclick="auth.signOut()" class="text-[10px] bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-full font-bold">SORTIR</button>
-            </div>
+        <header class="p-5 glass flex justify-between items-center z-10">
+            <h2 class="font-black italic text-lg">GIRLS<span style="color:var(--primary)">MOOD</span></h2>
+            <button onclick="auth.signOut()" class="text-[10px] bg-gray-100 px-3 py-2 rounded-full font-bold uppercase tracking-wide">Sortir</button>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 pb-24">
-            <section id="tab-events">
-                <div class="card space-y-3 border-2 border-[var(--primary)] border-opacity-20">
-                    <h3 class="text-xs font-black uppercase opacity-50">1. Créer un dossier</h3>
-                    <input type="text" id="event-name" placeholder="Nom (ex: Anniv Samia)" class="input-style font-bold">
-                    <div class="flex gap-2">
-                        <input type="date" id="event-date" class="input-style w-1/2 text-xs">
-                        <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs">
-                    </div>
-                    <button onclick="createEvent()" class="btn-primary text-xs">Créer l'événement</button>
+        <main class="flex-1 overflow-y-auto p-4 pb-24 hide-scrollbar">
+            
+            <div class="card">
+                <h3 class="text-xs font-black uppercase opacity-40 mb-3">✨ Nouveau Dossier</h3>
+                <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style bg-gray-50">
+                <div class="flex gap-2">
+                    <input type="date" id="event-date" class="input-style w-1/2 text-xs">
+                    <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs">
                 </div>
-                <div id="events-list" class="mt-6 space-y-3"></div>
-            </section>
+                <button onclick="createEvent()" class="btn-primary text-xs py-3 mt-1">Créer l'événement</button>
+            </div>
 
-            <section id="tab-chat" class="hidden h-full flex flex-col">
-                <div id="chat-box" class="flex-1 overflow-y-auto pb-4"></div>
-                <div class="flex gap-2 pt-2">
-                    <input type="text" id="msg-input" placeholder="Message..." class="input-style">
-                    <button onclick="sendMsg()" class="bg-[var(--primary)] text-white w-12 rounded-xl">➤</button>
+            <div id="events-list" class="space-y-3 mt-6">
                 </div>
-            </section>
         </main>
-
-        <nav class="glass fixed bottom-0 w-full grid grid-cols-2 py-4 z-20">
-            <button onclick="switchTab('events')" class="text-center opacity-50 nav-btn font-bold text-xs uppercase">📅 Events</button>
-            <button onclick="switchTab('chat')" class="text-center opacity-50 nav-btn font-bold text-xs uppercase">💬 Chat</button>
-        </nav>
     </div>
 
-    <div id="modal-event" class="hidden fixed inset-0 z-50 bg-[var(--bg)] flex flex-col overflow-hidden">
-        <div class="p-4 glass flex justify-between items-center">
-            <h2 id="modal-title" class="font-black text-xl italic uppercase" style="color:var(--primary)">Titre</h2>
-            <button onclick="closeModal()" class="text-2xl opacity-50">✕</button>
+    <div id="modal-event" class="hidden fixed inset-0 z-50 bg-[var(--bg)] flex flex-col">
+        <div class="p-5 glass flex justify-between items-center">
+            <h2 id="modal-title" class="font-black text-2xl italic uppercase" style="color:var(--primary)">Titre</h2>
+            <button onclick="closeModal()" class="text-2xl opacity-40 p-2">✕</button>
         </div>
-        <div class="flex-1 overflow-y-auto p-4 pb-20">
-            <div class="bg-[var(--primary)] bg-opacity-10 p-4 rounded-xl mb-6 border border-[var(--primary)]">
-                <h3 class="text-xs font-black uppercase mb-2" style="color:var(--primary)">2. Ajoute tes tenues ici 👇</h3>
+
+        <div class="flex-1 overflow-y-auto p-4 pb-10">
+            <div class="bg-pink-50 p-4 rounded-2xl border border-pink-100 mb-6">
+                <h3 class="text-xs font-black uppercase mb-2 text-pink-500">Ajouter une tenue 👇</h3>
                 <div class="flex gap-2">
-                    <input type="text" id="inspo-link" placeholder="Lien image..." class="input-style bg-white dark:bg-black/20">
-                    <button onclick="addInspo()" class="bg-[var(--primary)] text-white font-bold px-4 rounded-xl text-xl shadow-lg">+</button>
+                    <input type="text" id="inspo-link" placeholder="Colle ton lien ici..." class="input-style bg-white mb-0 text-xs">
+                    <button onclick="addInspo()" class="bg-[var(--primary)] text-white font-bold w-12 rounded-xl text-xl shadow-sm hover:shadow-md transition">+</button>
                 </div>
             </div>
-            <div id="inspo-grid" class="space-y-6"></div>
+
+            <div id="inspo-grid" class="space-y-4"></div>
         </div>
     </div>
 
     <script>
-        // --- THEME ---
-        function toggleTheme() {
-            const body = document.body;
-            if(body.getAttribute('data-theme') === 'dark') { body.removeAttribute('data-theme'); localStorage.setItem('theme', 'light'); }
-            else { body.setAttribute('data-theme', 'dark'); localStorage.setItem('theme', 'dark'); }
-        }
-        if(localStorage.getItem('theme') === 'dark') document.body.setAttribute('data-theme', 'dark');
-
-        // --- FIREBASE CONFIG (Loudressing2) ---
+        // --- 1. CONFIGURATION (Loudressing2) ---
         const firebaseConfig = {
           apiKey: "AIzaSyAgLVoCp13V7xanqR7oO_2uGwiTpCaFpAY",
           authDomain: "loudressing2.firebaseapp.com",
@@ -111,100 +97,100 @@
           messagingSenderId: "877161870915",
           appId: "1:877161870915:web:963f894f6be7d63bc006f6"
         };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        let currentUser = null;
-        let currentEventId = null;
 
-        // --- AUTH ---
-        auth.onAuthStateChanged(user => {
-            if (user) {
-                currentUser = user;
-                document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('app-view').classList.remove('hidden');
-                document.getElementById('app-view').classList.add('flex');
-                loadEvents();
-            } else {
-                document.getElementById('auth-view').classList.remove('hidden');
-                document.getElementById('app-view').classList.add('hidden');
-                document.getElementById('app-view').classList.remove('flex');
+        // --- 2. INITIALISATION ---
+        let auth, db, currentUser, currentEventId;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            db = firebase.firestore();
+            
+            // Surveiller si connecté ou pas
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    document.getElementById('auth-view').classList.add('hidden');
+                    document.getElementById('app-view').classList.remove('hidden');
+                    document.getElementById('app-view').classList.add('flex');
+                    loadEvents();
+                } else {
+                    document.getElementById('auth-view').classList.remove('hidden');
+                    document.getElementById('app-view').classList.add('hidden');
+                    document.getElementById('app-view').classList.remove('flex');
+                }
+            });
+
+        } catch (e) {
+            alert("Erreur de chargement : " + e.message);
+        }
+
+        // --- 3. FONCTIONS CONNEXION ---
+        async function handleLogin() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const errBox = document.getElementById('error-msg');
+            
+            if(!email || !pass) { errBox.innerText = "Remplis tout !"; errBox.classList.remove('hidden'); return; }
+            
+            try {
+                await auth.signInWithEmailAndPassword(email, pass);
+            } catch(e) {
+                errBox.innerText = "Erreur : " + e.message;
+                errBox.classList.remove('hidden');
             }
-        });
-        async function login() { 
-            try { await auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); } 
-            catch(e){ alert("Erreur connexion : " + e.message); } 
-        }
-        async function register() { 
-            try { await auth.createUserWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value); } 
-            catch(e){ alert("Erreur inscription : " + e.message); } 
         }
 
-        // --- EVENTS (AVEC ALERTES DE DIAGNOSTIC) ---
+        async function handleRegister() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            try {
+                await auth.createUserWithEmailAndPassword(email, pass);
+            } catch(e) {
+                alert("Erreur création : " + e.message);
+            }
+        }
+
+        // --- 4. FONCTIONS EVENTS ---
         async function createEvent() {
             const name = document.getElementById('event-name').value;
             const date = document.getElementById('event-date').value;
             const dress = document.getElementById('event-dress').value;
             
-            if(!name) return alert("❌ Erreur : Le nom de l'événement est vide !");
-            
-            // Petit message pour dire que ça charge
-            const btn = document.querySelector('.btn-primary');
-            const originalText = btn.innerText;
-            btn.innerText = "Création en cours...";
+            if(!name) return alert("Mets un nom !");
             
             try {
-                // On essaie d'écrire dans la base de données
                 await db.collection('events').add({
                     name: name, date: date, dressCode: dress,
                     creator: currentUser.email.split('@')[0], createdAt: Date.now()
                 });
-                
-                alert("✅ Succès ! Événement créé. Regarde la liste en dessous.");
                 document.getElementById('event-name').value = "";
-            } catch (e) {
-                // SI ÇA ECHOUE, ÇA TE DIRA POURQUOI ICI :
-                alert("🛑 ERREUR CRITIQUE : " + e.message + "\n\n(As-tu bien activé Firestore en mode Test ?)");
+                alert("C'est créé ! Regarde en bas 👇");
+            } catch(e) {
+                alert("Erreur : " + e.message);
             }
-            
-            btn.innerText = originalText;
         }
 
         function loadEvents() {
             db.collection('events').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 const list = document.getElementById('events-list');
-                if(snap.empty) {
-                    list.innerHTML = "<p class='text-center opacity-30 text-xs'>Aucun événement trouvé.</p>";
-                    return;
-                }
+                if(snap.empty) { list.innerHTML = "<p class='text-center opacity-30 text-xs mt-10'>Aucun événement...</p>"; return; }
+                
                 list.innerHTML = snap.docs.map(doc => `
-                    <div onclick="openEvent('${doc.id}', '${doc.data().name}')" class="card cursor-pointer active:scale-95 transition border-l-4 border-[var(--primary)]">
+                    <div onclick="openEvent('${doc.id}', '${doc.data().name}')" class="card cursor-pointer active:scale-95 transition border-l-4 border-[var(--primary)] relative">
                         <div class="flex justify-between items-center">
                             <h3 class="font-black text-xl capitalize">${doc.data().name}</h3>
-                            <span class="text-xl">➔</span>
+                            <span class="text-xl opacity-20">➔</span>
                         </div>
-                        <div class="text-xs opacity-60 mt-1">
-                            📅 ${doc.data().date || '...'} • 👗 ${doc.data().dressCode || '...'}
+                        <div class="text-xs opacity-60 mt-1 font-medium">
+                            📅 ${doc.data().date || '...'} <span class="mx-1">•</span> 👗 ${doc.data().dressCode || '...'}
                         </div>
                     </div>
                 `).join('');
             });
-            
-            // Chargement Chat
-            db.collection('chat').orderBy('date', 'asc').limit(50).onSnapshot(snap => {
-                const box = document.getElementById('chat-box');
-                box.innerHTML = snap.docs.map(doc => {
-                    const isMe = doc.data().email === currentUser.email;
-                    return `<div class="chat-bubble ${isMe ? 'bg-[var(--primary)] text-white self-end' : 'bg-gray-200 dark:bg-gray-700 self-start'}">
-                        ${!isMe ? `<div class="font-bold text-[9px] opacity-50 mb-1">${doc.data().user}</div>` : ''}
-                        ${doc.data().text}
-                    </div>`;
-                }).join('');
-                box.scrollTop = box.scrollHeight;
-            });
         }
 
-        // --- DASHBOARD ---
+        // --- 5. DASHBOARD & PHOTOS ---
         function openEvent(id, name) {
             currentEventId = id;
             document.getElementById('modal-title').innerText = name;
@@ -212,30 +198,32 @@
             
             db.collection('events').doc(id).collection('inspos').orderBy('createdAt', 'desc').onSnapshot(snap => {
                 const grid = document.getElementById('inspo-grid');
-                if(snap.empty) { grid.innerHTML = "<p class='text-center opacity-40 text-xs'>Aucune inspo... Ajoute la première !</p>"; return; }
+                if(snap.empty) { grid.innerHTML = "<p class='text-center opacity-40 text-xs'>Pas encore de photos...</p>"; return; }
                 
                 grid.innerHTML = snap.docs.map(doc => {
                     const d = doc.data();
                     const likes = d.likes || [];
                     const isLiked = likes.includes(currentUser.uid);
                     return `
-                    <div class="card overflow-hidden p-0">
-                        <img src="${d.url}" class="w-full max-h-80 object-cover" onerror="this.src='https://placehold.co/400?text=Erreur+Lien'">
-                        <div class="p-3">
-                            <div class="flex justify-between items-center">
-                                <p class="text-[9px] uppercase font-bold opacity-50">Posté par ${d.user}</p>
-                                <button onclick="deleteInspo('${doc.id}', '${d.email}')" class="opacity-30 text-xs">🗑</button>
+                    <div class="card p-0 overflow-hidden">
+                        <img src="${d.url}" class="w-full object-cover max-h-96" onerror="this.src='https://placehold.co/400?text=Lien+Cassé'">
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-bold uppercase opacity-40">Par ${d.user}</span>
+                                <button onclick="deleteInspo('${doc.id}', '${d.email}')" class="opacity-20 text-xs">🗑</button>
                             </div>
-                            <div class="flex gap-4 mt-3">
-                                <button onclick="toggleLike('${doc.id}', ${isLiked})" class="flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-[var(--primary)]' : 'opacity-50'}">
-                                    <span class="text-lg">${isLiked ? '❤️' : '🤍'}</span> ${likes.length}
+                            
+                            <div class="flex gap-4">
+                                <button onclick="toggleLike('${doc.id}', ${isLiked})" class="flex items-center gap-1 font-bold text-sm ${isLiked ? 'text-[var(--primary)]' : 'opacity-40'}">
+                                    <span class="text-xl">${isLiked ? '❤️' : '🤍'}</span> ${likes.length}
                                 </button>
-                                <button onclick="addComment('${doc.id}')" class="flex items-center gap-1 font-bold text-xs opacity-50">
-                                    <span class="text-lg">💬</span> Avis
+                                <button onclick="addComment('${doc.id}')" class="flex items-center gap-1 font-bold text-sm opacity-40">
+                                    <span class="text-xl">💬</span> Avis
                                 </button>
                             </div>
-                            <div class="mt-3 space-y-1 bg-gray-50 dark:bg-black/10 p-2 rounded-lg ${(d.comments || []).length === 0 ? 'hidden' : ''}">
-                                ${(d.comments || []).map(c => `<div class="text-[10px]"><span class="font-bold">${c.user}:</span> ${c.text}</div>`).join('')}
+
+                            <div class="mt-3 space-y-1 bg-gray-50 p-2 rounded-lg ${(d.comments || []).length === 0 ? 'hidden' : ''}">
+                                ${(d.comments || []).map(c => `<div class="text-[11px]"><span class="font-bold text-[var(--primary)]">${c.user}:</span> ${c.text}</div>`).join('')}
                             </div>
                         </div>
                     </div>`;
@@ -252,16 +240,25 @@
             });
             document.getElementById('inspo-link').value = "";
         }
+        
         async function toggleLike(docId, isLiked) {
             const ref = db.collection('events').doc(currentEventId).collection('inspos').doc(docId);
             if(isLiked) await ref.update({ likes: firebase.firestore.FieldValue.arrayRemove(currentUser.uid) });
             else await ref.update({ likes: firebase.firestore.FieldValue.arrayUnion(currentUser.uid) });
         }
+        
         async function addComment(docId) {
-            const txt = prompt("Ton avis ?");
+            const txt = prompt("Ton commentaire ?");
             if(txt) await db.collection('events').doc(currentEventId).collection('inspos').doc(docId).update({
                 comments: firebase.firestore.FieldValue.arrayUnion({ user: currentUser.email.split('@')[0], text: txt })
             });
         }
+        
         async function deleteInspo(id, email) {
-            if(currentUser.email === email && confirm("Supprimer ?")) await db.collection
+            if(currentUser.email === email && confirm("Supprimer ?")) await db.collection('events').doc(currentEventId).collection('inspos').doc(id).delete();
+        }
+
+        function closeModal() { document.getElementById('modal-event').classList.add('hidden'); }
+    </script>
+</body>
+</html>
