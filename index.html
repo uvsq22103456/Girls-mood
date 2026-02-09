@@ -17,10 +17,15 @@
         
         :root { --primary: #ec4899; --bg: #fdf2f8; }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #831843; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        
         .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s; }
         .btn-primary:active { transform: scale(0.96); }
-        .input-style { background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; }
-        .card { background: #fff; padding: 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); }
+        
+        /* Correction Date Blanc sur Blanc */
+        .input-style { background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #1f2937; }
+        input[type="date"] { color: #1f2937; -webkit-appearance: none; }
+        
+        .card { background: #fff; padding: 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); position: relative; }
         .nav-btn { opacity: 0.5; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -54,14 +59,8 @@
             <section id="tab-events" class="h-full overflow-y-auto p-4 pb-24 no-scrollbar">
                 <div id="countdown-card" class="card bg-gradient-to-r from-pink-500 to-rose-400 text-white border-none shadow-lg mb-6 hidden">
                     <div class="flex justify-between items-center">
-                        <div>
-                            <p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p>
-                            <h3 id="next-event-name" class="font-black text-xl tracking-tight">...</h3>
-                        </div>
-                        <div class="text-right bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm">
-                            <span id="days-left" class="text-2xl font-black">0</span>
-                            <p class="text-[8px] font-bold uppercase tracking-widest">Jours</p>
-                        </div>
+                        <div><p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p><h3 id="next-event-name" class="font-black text-xl tracking-tight">...</h3></div>
+                        <div class="text-right bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm"><span id="days-left" class="text-2xl font-black">0</span><p class="text-[8px] font-bold uppercase tracking-widest">Jours</p></div>
                     </div>
                 </div>
 
@@ -75,69 +74,72 @@
                     <button id="btn-create" class="btn-primary mt-2 text-xs py-3">Créer</button>
                 </div>
 
-                <div class="flex items-center justify-between mt-6 mb-2 pl-2 pr-2">
-                    <h3 class="text-xs font-bold uppercase text-pink-300">Vos Dossiers</h3>
-                    <span class="text-[10px] bg-pink-100 text-pink-500 px-2 py-1 rounded-full font-bold" id="event-count">0</span>
-                </div>
+                <div class="flex items-center justify-between mt-6 mb-2 pl-2 pr-2"><h3 class="text-xs font-bold uppercase text-pink-300">Vos Dossiers</h3><span class="text-[10px] bg-pink-100 text-pink-500 px-2 py-1 rounded-full font-bold" id="event-count">0</span></div>
                 <div id="events-list" class="space-y-3"></div>
             </section>
 
             <section id="tab-dressing" class="hidden h-full overflow-y-auto p-4 pb-24 no-scrollbar">
-                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl mb-4 flex items-center gap-3">
-                    <div class="bg-indigo-500 text-white p-2 rounded-full"><i data-lucide="lock" class="w-5 h-5"></i></div>
-                    <div>
-                        <h3 class="font-bold text-sm text-indigo-900">Mon Dressing Secret</h3>
-                        <p class="text-[10px] text-indigo-400">Visible uniquement par toi 🤫</p>
-                    </div>
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl mb-4 flex justify-between items-center">
+                    <div><h3 class="font-bold text-sm text-indigo-900">Mon Dressing</h3><p class="text-[10px] text-indigo-400">Secret & Privé 🤫</p></div>
+                    <button onclick="openModal(null, 'Mon Dressing Privé', true)" class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-90"><i data-lucide="plus" class="w-5 h-5"></i></button>
                 </div>
                 
-                <button onclick="openModal(null, 'Mon Dressing Privé', true)" class="btn-primary bg-indigo-500 shadow-indigo-200 mb-4 text-xs">
-                    + Ajouter une tenue secrète
-                </button>
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2 px-1">
+                        <h3 class="text-xs font-bold uppercase text-indigo-300">Mes Liens Favs (TikTok/Insta)</h3>
+                        <button onclick="addPrivateFav()" class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-1 rounded font-bold">+ Ajouter</button>
+                    </div>
+                    <div id="favs-list" class="flex gap-2 overflow-x-auto no-scrollbar pb-2"></div>
+                </div>
 
+                <div class="overflow-x-auto no-scrollbar flex gap-2 mb-4">
+                    <button onclick="setPrivateFilter('all')" class="filter-btn filter-active bg-indigo-500 border-indigo-500" id="p-filter-all">✨ Tout</button>
+                    <button onclick="setPrivateFilter('Tenue')" class="filter-btn" id="p-filter-Tenue">👗 Tenues</button>
+                    <button onclick="setPrivateFilter('Haut')" class="filter-btn" id="p-filter-Haut">👚 Hauts</button>
+                    <button onclick="setPrivateFilter('Bas')" class="filter-btn" id="p-filter-Bas">👖 Bas</button>
+                    <button onclick="setPrivateFilter('Chaussures')" class="filter-btn" id="p-filter-Chaussures">👠 Shoes</button>
+                </div>
                 <div id="private-grid" class="space-y-4"></div>
             </section>
 
             <section id="tab-chat" class="hidden h-full flex flex-col pb-20 bg-[#fdf2f8]">
-                <div class="p-4 pb-0">
-                    <div class="bg-pink-100 p-3 rounded-xl flex items-center gap-3 mb-2">
-                        <div class="bg-white p-2 rounded-full text-pink-500"><i data-lucide="coffee" class="w-5 h-5"></i></div>
-                        <div>
-                            <h3 class="font-bold text-sm text-pink-900">Le Salon</h3>
-                            <p class="text-[10px] text-pink-500">Discussion générale 💅</p>
-                        </div>
-                    </div>
-                </div>
+                <div class="p-4 pb-0"><div class="bg-white p-3 rounded-xl shadow-sm border border-pink-100 flex items-center gap-3"><div class="bg-pink-100 p-2 rounded-full text-pink-500"><i data-lucide="coffee" class="w-4 h-4"></i></div><div><h3 class="font-bold text-sm text-pink-900">Le Salon</h3><p class="text-[10px] text-pink-500">Discussion & Sondages 💅</p></div></div></div>
                 <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-                <div class="p-3 border-t border-pink-100 flex gap-2 bg-white">
-                    <input type="text" id="chat-input" placeholder="Un petit ragot ?" class="input-style mb-0 rounded-full px-5 border-none bg-slate-50">
+                <div class="p-3 border-t border-pink-100 flex gap-2 bg-white items-center">
+                    <button onclick="openVSModal()" class="bg-indigo-100 text-indigo-500 p-3 rounded-full active:scale-90 font-black text-xs shadow-sm">VS</button>
+                    <button onclick="askPoll()" class="bg-pink-100 text-pink-500 p-3 rounded-full active:scale-90 shadow-sm"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button>
+                    <input type="text" id="chat-input" placeholder="Ragots..." class="input-style mb-0 rounded-full px-5 border-none bg-slate-50">
                     <button id="btn-send-chat" class="bg-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-90 transition"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></button>
                 </div>
             </section>
         </main>
 
         <nav class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-pink-100 flex justify-around py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
-            <button onclick="switchTab('events')" id="nav-events" class="nav-btn nav-active">
-                <i data-lucide="calendar-heart" class="w-6 h-6"></i>
-                <span class="text-[9px] font-bold uppercase">Agenda</span>
-            </button>
-            <button onclick="switchTab('dressing')" id="nav-dressing" class="nav-btn">
-                <i data-lucide="shirt" class="w-6 h-6"></i>
-                <span class="text-[9px] font-bold uppercase">Privé</span>
-            </button>
-            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn">
-                <i data-lucide="message-circle-heart" class="w-6 h-6"></i>
-                <span class="text-[9px] font-bold uppercase">Salon</span>
-            </button>
+            <button onclick="switchTab('events')" id="nav-events" class="nav-btn nav-active"><i data-lucide="calendar-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Agenda</span></button>
+            <button onclick="switchTab('dressing')" id="nav-dressing" class="nav-btn"><i data-lucide="shirt" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Privé</span></button>
+            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn"><i data-lucide="message-circle-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Salon</span></button>
         </nav>
+    </div>
+
+    <div id="modal-edit-event" class="hidden fixed inset-0 z-[110] bg-black/50 flex items-center justify-center p-6 backdrop-blur-sm">
+        <div class="bg-white w-full rounded-2xl p-5 shadow-2xl">
+            <h3 class="font-black text-lg text-pink-500 mb-4">Modifier le dossier</h3>
+            <input type="text" id="edit-event-name" class="input-style mb-2">
+            <input type="date" id="edit-event-date" class="input-style mb-2">
+            <input type="text" id="edit-event-dress" class="input-style mb-4">
+            <div class="flex gap-2">
+                <button onclick="saveEventEdit()" class="flex-1 btn-primary py-3 text-xs">Enregistrer</button>
+                <button onclick="deleteEvent()" class="bg-red-500 text-white rounded-xl px-4 py-3 font-bold text-xs">Supprimer</button>
+            </div>
+            <button onclick="document.getElementById('modal-edit-event').classList.add('hidden')" class="w-full text-center text-xs text-slate-400 mt-3 font-bold">Annuler</button>
+        </div>
     </div>
 
     <div id="modal-event" class="hidden fixed inset-0 z-[100] bg-[#fdf2f8] flex flex-col">
         <div class="p-4 bg-white/90 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0 z-10">
             <h2 id="modal-title" class="font-black text-xl italic uppercase text-pink-600 truncate pr-4">Titre</h2>
-            <button id="btn-close-modal" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
+            <button onclick="closeModal('modal-event')" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
-
         <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20">
             <button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button>
             <button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button>
@@ -145,48 +147,37 @@
             <button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button>
             <button onclick="setFilter('Chaussures')" class="filter-btn" id="filter-Chaussures">👠 Shoes</button>
         </div>
-
         <div class="flex-1 overflow-y-auto p-4 pb-40 no-scrollbar">
             <div class="card border-pink-200 bg-white">
                 <h3 class="text-[10px] font-black uppercase text-pink-500 mb-3">Ajouter une pièce</h3>
-                
                 <select id="inspo-category" class="input-style text-xs mb-3 bg-pink-50 border-pink-200 font-bold text-pink-700">
-                    <option value="Tenue">✨ Tenue Entière / Ensemble</option>
-                    <option value="Haut">👚 Haut (Top, Pull...)</option>
-                    <option value="Bas">👖 Bas (Jupe, Pantalon...)</option>
-                    <option value="Chaussures">👠 Chaussures</option>
-                    <option value="Sac">👜 Sac à main</option>
-                    <option value="Accessoire">💍 Accessoire / Bijoux</option>
+                    <option value="Tenue">✨ Tenue Entière</option><option value="Haut">👚 Haut</option><option value="Bas">👖 Bas</option><option value="Chaussures">👠 Chaussures</option><option value="Sac">👜 Sac à main</option><option value="Accessoire">💍 Accessoire</option>
                 </select>
-
-                <div class="flex gap-2 mb-3">
-                    <button onclick="toggleUploadMode('link')" id="tab-link" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition">Lien Internet</button>
-                    <button onclick="toggleUploadMode('photo')" id="tab-photo" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition">Galerie</button>
-                </div>
-
-                <div id="mode-link" class="block">
-                    <input type="text" id="inspo-link-url" placeholder="Coller le lien de l'image..." class="input-style text-xs mb-2">
-                    <div class="info-bubble">💡 <b>Astuce :</b> Appui long sur l'image Google > "Copier l'adresse de l'image".</div>
-                </div>
-
-                <div id="mode-photo" class="hidden">
-                    <label for="file-upload" class="btn-primary bg-slate-50 text-pink-500 border border-pink-200 flex items-center justify-center gap-2 cursor-pointer active:scale-95 py-4 mb-2 shadow-sm">
-                        <i data-lucide="image-plus" class="w-5 h-5"></i>
-                        <span id="upload-text" class="text-xs">OUVRIR MA GALERIE</span>
-                    </label>
-                    <input type="file" id="file-upload" accept="image/*" class="hidden">
-                    <div class="info-bubble" id="upload-status">⚠️ Qualité optimisée pour la rapidité.</div>
-                </div>
-
-                <div class="mt-2 pt-2 border-t border-dashed border-pink-100 space-y-2">
-                    <input type="text" id="inspo-shop-link" placeholder="Lien Shopping (Vinted/Zara)..." class="input-style text-xs mb-0 border-pink-100">
-                    <input type="text" id="inspo-social-link" placeholder="Lien TikTok / Insta..." class="input-style text-xs mb-0 border-pink-100 bg-purple-50">
-                </div>
-
+                <div class="flex gap-2 mb-3"><button onclick="toggleUploadMode('link')" id="tab-link" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition">Lien</button><button onclick="toggleUploadMode('photo')" id="tab-photo" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition">Galerie</button></div>
+                <div id="mode-link" class="block"><input type="text" id="inspo-link-url" placeholder="Coller le lien..." class="input-style text-xs mb-2"><div class="text-[9px] text-pink-400 italic">💡 Astuce : Appui long sur l'image Google > Copier l'adresse.</div></div>
+                <div id="mode-photo" class="hidden"><label for="file-upload" class="btn-primary bg-slate-50 text-pink-500 border border-pink-200 flex items-center justify-center gap-2 cursor-pointer active:scale-95 py-4 mb-2 shadow-sm"><i data-lucide="image-plus" class="w-5 h-5"></i><span id="upload-text" class="text-xs">GALERIE</span></label><input type="file" id="file-upload" accept="image/*" class="hidden"></div>
+                <div class="mt-2 pt-2 border-t border-dashed border-pink-100"><input type="text" id="inspo-shop-link" placeholder="Lien Shopping..." class="input-style text-xs mb-0 border-pink-100"></div>
                 <button id="btn-submit-inspo" class="btn-primary text-xs py-3 mt-3">POSTER</button>
             </div>
-
             <div id="inspo-grid" class="space-y-6 mt-4"></div>
+        </div>
+    </div>
+
+    <div id="modal-vs" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6">
+            <h3 class="font-black text-xl text-center text-pink-600 mb-4 italic">DUEL DE MODE 🔥</h3>
+            <div class="flex gap-2 mb-4">
+                <div class="flex-1" onclick="document.getElementById('vs-file-1').click()">
+                    <div id="vs-preview-1" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold cursor-pointer">PHOTO A</div>
+                    <input type="file" id="vs-file-1" class="hidden" accept="image/*" onchange="previewVS(1, this)">
+                </div>
+                <div class="flex-1" onclick="document.getElementById('vs-file-2').click()">
+                    <div id="vs-preview-2" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold cursor-pointer">PHOTO B</div>
+                    <input type="file" id="vs-file-2" class="hidden" accept="image/*" onchange="previewVS(2, this)">
+                </div>
+            </div>
+            <button onclick="sendVS()" class="btn-primary text-xs mb-2">LANCER LE DUEL</button>
+            <button onclick="closeModal('modal-vs')" class="w-full text-center text-xs text-slate-400 font-bold py-2">Annuler</button>
         </div>
     </div>
 
@@ -199,70 +190,35 @@
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         
         let currentUser = null; let currentEventId = null; let pendingBase64 = null; let uploadMode = 'link';
-        let currentFilter = 'all'; let allInspos = []; let isPrivateMode = false;
+        let currentFilter = 'all'; let currentPrivateFilter = 'all'; let allInspos = []; let allPrivateInspos = []; let isPrivateMode = false;
+        let vsImg1 = null; let vsImg2 = null; let eventToEditId = null;
 
         onAuthStateChanged(auth, (user) => {
-            if (user) { 
-                currentUser = user; 
-                document.getElementById('auth-view').classList.add('hidden'); 
-                document.getElementById('app-view').classList.remove('hidden'); 
-                document.getElementById('app-view').classList.add('flex'); 
-                loadEvents(); loadChat(); loadPrivateDressing();
-            } else { 
-                document.getElementById('auth-view').classList.remove('hidden'); 
-                document.getElementById('app-view').classList.add('hidden'); 
-                document.getElementById('app-view').classList.remove('flex'); 
-            }
+            if (user) { currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); loadEvents(); loadChat(); loadPrivateDressing(); loadPrivateFavs(); } 
+            else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
         });
 
-        // AUTH
-        document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = "Erreur: " + e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
-        document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = "Erreur: " + e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
+        document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
+        document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-        // NAVIGATION
-        window.switchTab = (tab) => {
-            document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden'));
-            document.getElementById('tab-'+tab).classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active'));
-            document.getElementById('nav-'+tab).classList.add('nav-active');
-        };
+        window.switchTab = (tab) => { document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden')); document.getElementById('tab-'+tab).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('nav-'+tab).classList.add('nav-active'); };
+        window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+        window.toggleUploadMode = (mode) => { uploadMode = mode; document.getElementById('mode-link').classList.toggle('hidden', mode !== 'link'); document.getElementById('mode-photo').classList.toggle('hidden', mode !== 'photo'); document.getElementById('tab-link').className = mode === 'link' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition"; document.getElementById('tab-photo').className = mode === 'photo' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition"; };
+        window.setFilter = (cat) => { currentFilter = cat; document.querySelectorAll('#filter-bar .filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-'+cat).classList.add('filter-active'); renderInspos(); };
+        window.setPrivateFilter = (cat) => { currentPrivateFilter = cat; document.querySelectorAll('#tab-dressing .filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('p-filter-'+cat).classList.add('filter-active'); renderPrivateInspos(); };
 
-        window.toggleUploadMode = (mode) => {
-            uploadMode = mode;
-            document.getElementById('mode-link').classList.toggle('hidden', mode !== 'link');
-            document.getElementById('mode-photo').classList.toggle('hidden', mode !== 'photo');
-            document.getElementById('tab-link').className = mode === 'link' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
-            document.getElementById('tab-photo').className = mode === 'photo' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
-        };
-
-        window.setFilter = (cat) => {
-            currentFilter = cat;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active'));
-            document.getElementById('filter-'+cat).classList.add('filter-active');
-            renderInspos();
-        };
-
-        // EVENTS
-        document.getElementById('btn-create').onclick = async () => {
-            const name = document.getElementById('event-name').value;
-            if (!name) return alert("Nom manquant !");
-            await addDoc(collection(db, 'events'), { name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value, creator: currentUser.email, createdAt: Date.now(), participants: [currentUser.email.split('@')[0]] });
-            document.getElementById('event-name').value = ""; alert("✅ Dossier créé !");
-        };
+        document.getElementById('btn-create').onclick = async () => { const name = document.getElementById('event-name').value; if (!name) return alert("Nom ?"); await addDoc(collection(db, 'events'), { name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value, creator: currentUser.email, createdAt: Date.now(), participants: [currentUser.email.split('@')[0]] }); document.getElementById('event-name').value = ""; alert("✅ Créé !"); };
 
         function loadEvents() {
             onSnapshot(query(collection(db, 'events'), orderBy('date', 'asc')), (snap) => {
-                const list = document.getElementById('events-list'); list.innerHTML = "";
-                document.getElementById('event-count').innerText = snap.size;
-                let closestEvent = null; const now = new Date(); now.setHours(0,0,0,0);
+                const list = document.getElementById('events-list'); list.innerHTML = ""; document.getElementById('event-count').innerText = snap.size; let closestEvent = null; const now = new Date(); now.setHours(0,0,0,0);
                 snap.forEach(d => {
-                    const data = d.data(); const participants = data.participants || [];
-                    const isParticipating = participants.includes(currentUser.email.split('@')[0]);
+                    const data = d.data(); const participants = data.participants || []; const isParticipating = participants.includes(currentUser.email.split('@')[0]); const isCreator = data.creator === currentUser.email;
                     if(data.date) { const evtDate = new Date(data.date); if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) closestEvent = { name: data.name, date: evtDate }; }
                     const div = document.createElement('div'); div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden";
-                    div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize">${data.name}</h3><button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`;
-                    div.onclick = (e) => { if(!e.target.closest('.btn-part')) openModal(d.id, data.name, false); };
+                    div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize flex-1">${data.name}</h3>${isCreator ? `<button class="btn-settings text-slate-300 hover:text-pink-500 px-2" onclick="openEditEvent('${d.id}', '${data.name}', '${data.date}', '${data.dressCode}')">⚙️</button>`:''}<button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`;
+                    div.onclick = (e) => { if(!e.target.closest('.btn-part') && !e.target.closest('.btn-settings')) openModal(d.id, data.name, false); };
                     div.querySelector('.btn-part').onclick = async () => { const ref = doc(db, 'events', d.id); const name = currentUser.email.split('@')[0]; if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) }); else await updateDoc(ref, { participants: arrayUnion(name) }); };
                     list.appendChild(div);
                 });
@@ -271,142 +227,101 @@
             });
         }
 
-        // PRIVATE DRESSING
-        function loadPrivateDressing() {
-            // Charge les items privés (collection 'private_dressing' filtrée par UID)
-            onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => {
-                const grid = document.getElementById('private-grid'); grid.innerHTML = "";
-                if(snap.empty) grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Ton dressing est vide...</div>";
-                snap.forEach(d => {
-                    const data = d.data();
-                    const div = createInspoCard(d.id, data, true); // true = isPrivate
-                    grid.appendChild(div);
-                });
-                lucide.createIcons();
-            });
-        }
+        // EDIT EVENTS
+        window.openEditEvent = (id, name, date, dress) => { eventToEditId = id; document.getElementById('edit-event-name').value = name; document.getElementById('edit-event-date').value = date; document.getElementById('edit-event-dress').value = dress; document.getElementById('modal-edit-event').classList.remove('hidden'); };
+        window.saveEventEdit = async () => { if(eventToEditId) { await updateDoc(doc(db,'events',eventToEditId), { name: document.getElementById('edit-event-name').value, date: document.getElementById('edit-event-date').value, dressCode: document.getElementById('edit-event-dress').value }); document.getElementById('modal-edit-event').classList.add('hidden'); } };
+        window.deleteEvent = async () => { if(eventToEditId && confirm("Supprimer définitivement ?")) { await deleteDoc(doc(db,'events',eventToEditId)); document.getElementById('modal-edit-event').classList.add('hidden'); } };
 
-        // CHAT
-        document.getElementById('btn-send-chat').onclick = async () => { const txt = document.getElementById('chat-input').value; if(txt) { await addDoc(collection(db, 'chat'), { text: txt, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); document.getElementById('chat-input').value = ""; } };
-        function loadChat() { onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => { const box = document.getElementById('chat-box'); box.innerHTML = snap.docs.map(d => { const data = d.data(); const isMe = data.email === currentUser.email; return `<div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2"><span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${isMe ? 'Moi' : data.user}</span><div class="${isMe ? 'bg-pink-500 text-white rounded-br-none' : 'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${data.text}</div></div>`; }).join(''); box.scrollTop = box.scrollHeight; }); }
+        function loadPrivateDressing() { onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => { allPrivateInspos = []; snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); }); renderPrivateInspos(); }); }
+        function renderPrivateInspos() { const grid = document.getElementById('private-grid'); grid.innerHTML = ""; const filtered = allPrivateInspos.filter(i => currentPrivateFilter === 'all' || i.category === currentPrivateFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Rien ici... ✨</div>"; return; } filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, true)); }); lucide.createIcons(); }
 
-        // UPLOAD & MODAL
-        window.openModal = (id, name, isPrivate) => {
-            currentEventId = id; isPrivateMode = isPrivate;
-            document.getElementById('modal-title').innerText = name; 
-            document.getElementById('modal-event').classList.remove('hidden');
-            
-            // Gestion affichage selon mode
-            if(isPrivate) {
-                document.getElementById('filter-bar').classList.add('hidden');
-                document.getElementById('inspo-grid').innerHTML = ""; // On vide car géré par loadPrivateDressing
-                document.getElementById('inspo-grid').classList.add('hidden'); // On cache la liste dans la modal si privé
-            } else {
-                document.getElementById('filter-bar').classList.remove('hidden');
-                document.getElementById('inspo-grid').classList.remove('hidden');
-                currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active');
-                onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => {
-                    allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); });
-                    renderInspos();
-                });
-            }
-        };
+        window.addPrivateFav = async () => { const n = prompt("Nom du compte (ex: @Zara) ?"); const l = prompt("Lien (Copier/Coller) ?"); if(n && l) await addDoc(collection(db, 'private_favs'), { uid: currentUser.uid, name: n, link: l, createdAt: Date.now() }); };
+        function loadPrivateFavs() { onSnapshot(query(collection(db, 'private_favs'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => { const list = document.getElementById('favs-list'); list.innerHTML = ""; snap.forEach(d => { list.innerHTML += `<a href="${d.data().link}" target="_blank" class="block min-w-[100px] bg-white border border-indigo-100 p-2 rounded-xl text-center"><div class="text-[10px] font-bold text-indigo-900 truncate">${d.data().name}</div><div class="text-[8px] text-indigo-400">Ouvrir ➔</div></a>`; }); }); }
 
-        document.getElementById('file-upload').onchange = (e) => {
-            const file = e.target.files[0]; if (!file) return; 
-            document.getElementById('upload-text').innerText = "Traitement...";
-            const reader = new FileReader();
-            reader.onload = (re) => {
-                const img = new Image();
-                img.onload = () => {
-                    const cvs = document.createElement('canvas'); let w = img.width; let h = img.height; const M = 800; if(w>h){if(w>M){h*=M/w;w=M;}}else{if(h>M){w*=M/h;h=M;}} cvs.width=w; cvs.height=h; cvs.getContext("2d").drawImage(img,0,0,w,h);
-                    pendingBase64 = cvs.toDataURL("image/jpeg", 0.5); 
-                    document.getElementById('upload-text').innerText = "PHOTO PRÊTE !";
-                    document.getElementById('upload-status').innerText = "✅ Image convertie.";
-                }; img.src = re.target.result;
+        document.getElementById('btn-send-chat').onclick = async () => { const txt = document.getElementById('chat-input').value; if(txt) { await addDoc(collection(db, 'chat'), { text: txt, type: 'text', user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); document.getElementById('chat-input').value = ""; } };
+        window.askPoll = async () => { const q = prompt("Question du sondage ?"); if(q) await addDoc(collection(db, 'chat'), { type: 'poll', question: q, votes: { yes: [], no: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); };
+        
+        window.openVSModal = () => document.getElementById('modal-vs').classList.remove('hidden');
+        window.previewVS = (num, input) => {
+            const file = input.files[0]; if(!file) return;
+            const reader = new FileReader(); reader.onload = (e) => { 
+                const img = new Image(); img.onload = () => {
+                    const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+                    let w=img.width, h=img.height, m=600; if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}
+                    c.width=w;c.height=h; ctx.drawImage(img,0,0,w,h);
+                    const b64 = c.toDataURL("image/jpeg", 0.6);
+                    document.getElementById(`vs-preview-${num}`).innerHTML = ""; 
+                    document.getElementById(`vs-preview-${num}`).style.backgroundImage = `url(${b64})`;
+                    document.getElementById(`vs-preview-${num}`).style.backgroundSize = 'cover';
+                    if(num===1) vsImg1 = b64; else vsImg2 = b64;
+                }; img.src = e.target.result;
             }; reader.readAsDataURL(file);
         };
+        window.sendVS = async () => {
+            if(!vsImg1 || !vsImg2) return alert("Choisis les 2 photos !");
+            await addDoc(collection(db, 'chat'), { type: 'vs', img1: vsImg1, img2: vsImg2, votes: { v1: [], v2: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() });
+            document.getElementById('modal-vs').classList.add('hidden'); vsImg1=null; vsImg2=null;
+        };
+
+        function loadChat() { 
+            onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => { 
+                const box = document.getElementById('chat-box'); 
+                box.innerHTML = snap.docs.map(d => { 
+                    const data = d.data(); const isMe = data.email === currentUser.email;
+                    if(data.type === 'poll') {
+                        const y = (data.votes.yes||[]).length, n = (data.votes.no||[]).length, t = y+n; const p = t===0?50:(y/t)*100;
+                        return `<div class="mb-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-100"><div class="text-[10px] font-bold text-indigo-400 mb-1">SONDAGE DE ${data.user}</div><h3 class="font-bold text-indigo-900 mb-3 text-sm">${data.question}</h3><div class="flex gap-1 h-8 rounded-lg overflow-hidden"><div onclick="vote('${d.id}','yes')" class="bg-green-400 flex items-center justify-center text-white font-bold text-[10px]" style="width:${p}%">OUI (${y})</div><div onclick="vote('${d.id}','no')" class="bg-red-400 flex items-center justify-center text-white font-bold text-[10px] flex-1">NON (${n})</div></div></div>`;
+                    }
+                    if(data.type === 'vs') {
+                        const v1 = (data.votes.v1||[]).length, v2 = (data.votes.v2||[]).length;
+                        return `<div class="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-pink-100"><div class="text-[10px] font-bold text-pink-400 mb-2 text-center">DUEL DE ${data.user} 🔥</div><div class="flex gap-2"><div onclick="voteVS('${d.id}','v1')" class="flex-1 relative cursor-pointer"><img src="${data.img1}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v1}</div></div><div class="flex items-center text-xs font-black text-slate-300">VS</div><div onclick="voteVS('${d.id}','v2')" class="flex-1 relative cursor-pointer"><img src="${data.img2}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v2}</div></div></div></div>`;
+                    }
+                    return `<div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2"><span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${isMe ? 'Moi' : data.user}</span><div class="${isMe ? 'bg-pink-500 text-white rounded-br-none' : 'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${data.text}</div></div>`; 
+                }).join(''); box.scrollTop = box.scrollHeight; 
+            }); 
+        }
+
+        window.vote = async (id, c) => { const r = doc(db,'chat',id); const u = currentUser.email.split('@')[0]; if(c==='yes') await updateDoc(r,{"votes.yes":arrayUnion(u),"votes.no":arrayRemove(u)}); else await updateDoc(r,{"votes.no":arrayUnion(u),"votes.yes":arrayRemove(u)}); };
+        window.voteVS = async (id, c) => { const r = doc(db,'chat',id); const u = currentUser.email.split('@')[0]; if(c==='v1') await updateDoc(r,{"votes.v1":arrayUnion(u),"votes.v2":arrayRemove(u)}); else await updateDoc(r,{"votes.v2":arrayUnion(u),"votes.v1":arrayRemove(u)}); };
+
+        window.openModal = (id, name, isPrivate) => {
+            currentEventId = id; isPrivateMode = isPrivate; document.getElementById('modal-title').innerText = name; document.getElementById('modal-event').classList.remove('hidden');
+            if(isPrivate) { document.getElementById('filter-bar').classList.add('hidden'); document.getElementById('inspo-grid').innerHTML = ""; document.getElementById('inspo-grid').classList.add('hidden'); } 
+            else { document.getElementById('filter-bar').classList.remove('hidden'); document.getElementById('inspo-grid').classList.remove('hidden'); currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active'); onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => { allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); }); renderInspos(); }); }
+        };
+
+        document.getElementById('file-upload').onchange = (e) => { const f = e.target.files[0]; if(!f) return; document.getElementById('upload-text').innerText = "..."; const r = new FileReader(); r.onload = (e) => { const i = new Image(); i.onload = () => { const c = document.createElement('canvas'); let w=i.width,h=i.height,m=800; if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}} c.width=w;c.height=h; c.getContext('2d').drawImage(i,0,0,w,h); pendingBase64 = c.toDataURL("image/jpeg", 0.5); document.getElementById('upload-text').innerText = "OK !"; }; i.src = e.target.result; }; r.readAsDataURL(f); };
 
         document.getElementById('btn-submit-inspo').onclick = async () => {
-            const linkUrl = document.getElementById('inspo-link-url').value; const shopLink = document.getElementById('inspo-shop-link').value; const socialLink = document.getElementById('inspo-social-link').value; const cat = document.getElementById('inspo-category').value;
-            const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : linkUrl;
-            if(!finalUrl) return alert("Il manque la photo ou le lien !");
-            
-            const data = { url: finalUrl, shop: shopLink, social: socialLink, category: cat, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
-
-            try { 
-                if(isPrivateMode) {
-                    await addDoc(collection(db, 'private_dressing'), data);
-                } else {
-                    await addDoc(collection(db, 'events', currentEventId, 'inspos'), data);
-                }
-                document.getElementById('inspo-link-url').value = ""; document.getElementById('inspo-shop-link').value = ""; document.getElementById('inspo-social-link').value = ""; document.getElementById('file-upload').value = ""; document.getElementById('upload-text').innerText = "OUVRIR MA GALERIE"; pendingBase64 = null; 
-                alert("✨ C'est posté !");
-                if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); // Fermer si privé
-            } catch(e) { alert("Erreur: " + e.message); }
+            const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value;
+            if(!finalUrl) return alert("Manque photo/lien !");
+            const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
+            try { await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); }
         };
 
         function renderInspos() {
-            const grid = document.getElementById('inspo-grid'); grid.innerHTML = "";
-            const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter);
-            if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-pink-50 rounded-xl'>Aucune pièce ici... ✨</div>"; return; }
-            filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, false)); });
-            lucide.createIcons();
+            const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter);
+            if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; }
+            filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons();
         }
+
+        // CYCLE CATEGORY ON CLICK
+        window.cycleCat = async (id, currentCat, isPrivate) => {
+            const cats = ['Tenue','Haut','Bas','Chaussures','Sac','Accessoire'];
+            const idx = cats.indexOf(currentCat); const next = cats[(idx+1)%cats.length];
+            if(confirm(`Changer ${currentCat} en ${next} ?`)) {
+                await updateDoc(doc(db, isPrivate?'private_dressing':'events', isPrivate?id:currentEventId, isPrivate?null:'inspos', isPrivate?null:id), { category: next });
+            }
+        };
 
         function createInspoCard(id, d, isPrivate) {
             const isLiked = (d.likes || []).includes(currentUser.uid);
             const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6";
-            
-            let actionButtons = '';
-            if(!isPrivate) {
-                actionButtons = `
-                    <div class="flex gap-3">
-                        <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button>
-                        <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button>
-                    </div>`;
-            } else {
-                actionButtons = `<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>`;
-            }
-
-            div.innerHTML = `
-                <div class="relative">
-                    <img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50">
-                    <div class="absolute top-2 left-2 ${isPrivate ? 'bg-indigo-500' : 'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm">${d.category || 'Tenue'}</div>
-                    ${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                </div>
-                <div class="p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <span class="text-[10px] font-black uppercase ${isPrivate ? 'text-indigo-400' : 'text-pink-400'} tracking-wider">${isPrivate ? 'Mon Dressing' : 'Posté par ' + d.user}</span>
-                        ${actionButtons}
-                    </div>
-                    
-                    ${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 hover:bg-pink-50 hover:text-pink-500 transition flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}
-                    ${d.social ? `<a href="${d.social}" target="_blank" class="block w-full text-center bg-black text-white text-[10px] font-bold py-3 rounded-xl mb-3 hover:opacity-80 transition flex items-center justify-center gap-2"><i data-lucide="smartphone" class="w-3 h-3"></i> VOIR SUR TIKTOK/INSTA</a>` : ''}
-
-                    <div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">
-                        ${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}
-                    </div>
-                </div>
-            `;
-            
-            if(d.email === currentUser.email || isPrivate) {
-                div.querySelector('.btn-del').onclick = () => { 
-                    if(confirm('Supprimer ?')) deleteDoc(doc(db, isPrivate ? 'private_dressing' : 'events', isPrivate ? d.id : currentEventId, isPrivate ? null : 'inspos', isPrivate ? null : d.id)); // La logique delete est un peu différente selon la structure, ici on simplifie
-                    // Correction delete logic pour structure imbriquée vs root
-                    if(isPrivate) deleteDoc(doc(db, 'private_dressing', id));
-                    else deleteDoc(doc(db, 'events', currentEventId, 'inspos', id));
-                };
-            }
-            
-            if(!isPrivate) {
-                div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); };
-                div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); };
-            }
+            div.innerHTML = `<div class="relative"><img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50"><div onclick="cycleCat('${id}', '${d.category||'Tenue'}', ${isPrivate})" class="absolute top-2 left-2 ${isPrivate?'bg-indigo-500':'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm cursor-pointer">${d.category || 'Tenue'} ↻</div>${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div><div class="p-4"><div class="flex justify-between items-center mb-3"><span class="text-[10px] font-black uppercase ${isPrivate?'text-indigo-400':'text-pink-400'} tracking-wider">${isPrivate?'Mon Dressing':'Posté par '+d.user}</span>${!isPrivate ? `<div class="flex gap-3"><button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button><button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button></div>` : '<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>'}</div>${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}<div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}</div></div>`;
+            if(d.email === currentUser.email || isPrivate) div.querySelector('.btn-del').onclick = () => { if(confirm('Supprimer ?')) deleteDoc(doc(db, isPrivate?'private_dressing':'events', isPrivate?id:currentEventId, isPrivate?null:'inspos', isPrivate?null:id)); };
+            if(!isPrivate) { div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); }; div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); }; }
             return div;
         }
-
-        document.getElementById('btn-close-modal').onclick = () => document.getElementById('modal-event').classList.add('hidden');
         lucide.createIcons();
     </script>
 </body>
