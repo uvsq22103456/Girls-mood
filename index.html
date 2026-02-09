@@ -15,99 +15,63 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
-        :root { 
-            --app-bg: #fdf2f8; /* Rose très pâle */
-            --card-bg: #ffffff; 
-            --primary: #ec4899; /* Pink-500 */
-            --text-main: #831843; /* Pink-900 */
-        }
-
+        :root { --primary: #ec4899; }
         body { 
             font-family: 'Outfit', sans-serif; 
-            background-color: var(--app-bg); 
-            color: var(--text-main);
+            background-color: #fdf2f8; 
+            color: #831843;
             height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            display: flex; flex-direction: column; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
-
-        .input-style {
-            background: #fff;
-            border: 1px solid #fbcfe8;
-            width: 100%;
-            padding: 16px;
-            border-radius: 16px;
-            outline: none;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 12px;
-        }
-
         .btn-primary {
-            background: var(--primary);
-            color: white;
-            font-weight: 800;
-            padding: 16px;
-            border-radius: 16px;
-            text-transform: uppercase;
-            width: 100%;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
-            transition: transform 0.1s;
+            background: var(--primary); color: white; font-weight: 800; padding: 16px; border-radius: 16px;
+            text-transform: uppercase; width: 100%; letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s;
         }
         .btn-primary:active { transform: scale(0.96); }
-
-        .card {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.05);
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.5);
+        .input-style {
+            background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 16px; border-radius: 16px;
+            outline: none; font-weight: 600; margin-bottom: 12px;
         }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .card {
+            background: #fff; padding: 20px; border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.05); margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.5);
+        }
+        /* Loader */
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #ec4899; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8] transition-all duration-500">
+    <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8]">
         <div class="text-center mb-10">
-            <h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS<span class="text-pink-900">MOOD</span></h1>
+            <h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS MOOD</h1>
             <p class="text-xs font-bold uppercase tracking-widest text-pink-400 mt-2">Le QG des copines</p>
         </div>
-
         <input type="email" id="email" placeholder="Email..." class="input-style">
         <input type="password" id="password" placeholder="Mot de passe..." class="input-style">
-        
         <button id="btn-login" class="btn-primary mt-4">Entrer</button>
         <button id="btn-register" class="text-xs text-center w-full text-pink-400 font-bold underline mt-6 py-4">Créer un compte</button>
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
         <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-pink-100">
-            <h2 class="font-black italic text-xl text-pink-500">GIRLS<span class="text-pink-900">MOOD</span></h2>
-            <button id="btn-logout" class="bg-pink-100 text-pink-600 p-2 rounded-full active:scale-90 transition">
-                <i data-lucide="log-out" class="w-4 h-4"></i>
-            </button>
+            <h2 class="font-black italic text-xl text-pink-500">GIRLS MOOD</h2>
+            <button id="btn-logout" class="bg-pink-100 text-pink-600 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
         </header>
 
         <main class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
-            
             <div class="card bg-gradient-to-br from-white to-pink-50 border-pink-100">
                 <h3 class="text-[10px] font-black uppercase text-pink-400 mb-3 tracking-widest">✨ Nouveau Dossier</h3>
-                <div class="space-y-2">
-                    <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style border-none shadow-sm mb-0">
-                    <div class="flex gap-2">
-                        <input type="date" id="event-date" class="input-style border-none shadow-sm w-1/2 mb-0 text-xs">
-                        <input type="text" id="event-dress" placeholder="Dress Code" class="input-style border-none shadow-sm w-1/2 mb-0 text-xs">
-                    </div>
+                <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style mb-2">
+                <div class="flex gap-2">
+                    <input type="date" id="event-date" class="input-style w-1/2 text-xs">
+                    <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs">
                 </div>
-                <button id="btn-create" class="btn-primary mt-3 py-3 text-xs">Créer l'événement</button>
+                <button id="btn-create" class="btn-primary mt-2 text-xs">Créer</button>
             </div>
-
             <div id="events-list" class="space-y-4 mt-6"></div>
         </main>
     </div>
@@ -115,20 +79,20 @@
     <div id="modal-event" class="hidden fixed inset-0 z-[100] bg-[#fdf2f8] flex flex-col">
         <div class="p-6 bg-white/80 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0">
             <h2 id="modal-title" class="font-black text-2xl italic uppercase text-pink-600 truncate pr-4">Titre</h2>
-            <button id="btn-close-modal" class="bg-slate-100 p-2 rounded-full text-slate-500">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
+            <button id="btn-close-modal" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 pb-10 no-scrollbar">
-            <div class="bg-white p-4 rounded-2xl shadow-sm border border-pink-100 mb-6 flex gap-2">
-                <input type="text" id="inspo-link" placeholder="Colle un lien image..." class="flex-1 bg-pink-50 rounded-xl px-4 text-xs font-bold text-pink-900 outline-none">
-                <button id="btn-add-inspo" class="bg-pink-500 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg active:scale-90 transition">
-                    <i data-lucide="plus" class="w-5 h-5"></i>
-                </button>
-            </div>
+        <div class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
+            <div id="inspo-grid" class="space-y-5 mb-10"></div>
+        </div>
 
-            <div id="inspo-grid" class="space-y-5"></div>
+        <div class="absolute bottom-0 w-full p-4 bg-white border-t border-pink-100 pb-8">
+            <label for="file-upload" class="btn-primary flex items-center justify-center gap-2 cursor-pointer active:scale-95">
+                <i data-lucide="camera" class="w-5 h-5"></i>
+                <span id="upload-text">AJOUTER UNE PHOTO</span>
+                <div id="upload-loader" class="loader hidden"></div>
+            </label>
+            <input type="file" id="file-upload" accept="image/*" class="hidden">
         </div>
     </div>
 
@@ -137,7 +101,6 @@
         import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, arrayUnion, arrayRemove, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- CONFIG (Loudressing2) ---
         const firebaseConfig = {
             apiKey: "AIzaSyAgLVoCp13V7xanqR7oO_2uGwiTpCaFpAY",
             authDomain: "loudressing2.firebaseapp.com",
@@ -154,7 +117,7 @@
         let currentUser = null;
         let currentEventId = null;
 
-        // --- AUTH OBSERVER ---
+        // AUTH
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -169,174 +132,137 @@
             }
         });
 
-        // --- ACTIONS AUTH ---
-        document.getElementById('btn-login').onclick = async () => {
-            try {
-                await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-            } catch(e) { alert("Erreur : " + e.message); }
-        };
-
-        document.getElementById('btn-register').onclick = async () => {
-            try {
-                await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-            } catch(e) { alert("Erreur Création : " + e.message); }
-        };
-
+        document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){alert(e.message);} };
+        document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){alert(e.message);} };
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-        // --- ACTIONS EVENTS ---
+        // CREATE EVENT
         document.getElementById('btn-create').onclick = async () => {
             const name = document.getElementById('event-name').value;
-            const date = document.getElementById('event-date').value;
-            const dress = document.getElementById('event-dress').value;
-            
-            if (!name) return alert("Il faut un nom !");
-            
-            try {
-                await addDoc(collection(db, 'events'), {
-                    name: name,
-                    date: date,
-                    dressCode: dress,
-                    creator: currentUser.email.split('@')[0],
-                    createdAt: Date.now()
-                });
-                document.getElementById('event-name').value = "";
-                alert("Dossier créé avec succès ! 💖");
-            } catch(e) {
-                alert("Erreur Base de Données : " + e.message);
-            }
+            if (!name) return alert("Nom manquant !");
+            await addDoc(collection(db, 'events'), {
+                name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value,
+                creator: currentUser.email, createdAt: Date.now()
+            });
+            document.getElementById('event-name').value = "";
+            alert("✅ Dossier créé !");
         };
 
         function loadEvents() {
-            const q = query(collection(db, 'events'), orderBy('createdAt', 'desc'));
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('events-list');
-                list.innerHTML = "";
-                
-                if (snapshot.empty) {
-                    list.innerHTML = "<div class='text-center opacity-40 mt-10 text-xs font-bold uppercase'>Rien pour l'instant...</div>";
-                    return;
-                }
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
+            onSnapshot(query(collection(db, 'events'), orderBy('createdAt', 'desc')), (snap) => {
+                const list = document.getElementById('events-list'); list.innerHTML = "";
+                snap.forEach(d => {
+                    const data = d.data();
                     const div = document.createElement('div');
-                    div.className = "card active:scale-95 transition-all cursor-pointer border-l-4 border-pink-400 relative";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-center mb-1">
-                            <h3 class="font-black text-xl capitalize text-pink-900">${data.name}</h3>
-                            <i data-lucide="chevron-right" class="text-pink-300"></i>
-                        </div>
-                        <div class="flex gap-3 text-[10px] font-bold uppercase text-pink-400">
-                            <span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date || '...'}</span>
-                            <span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode || 'Libre'}</span>
-                        </div>
-                    `;
-                    div.onclick = () => openEvent(docSnap.id, data.name);
+                    div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer";
+                    div.innerHTML = `<h3 class="font-black text-xl text-pink-900 capitalize">${data.name}</h3><p class="text-xs text-pink-400 font-bold mt-1">📅 ${data.date||'...'} • 👗 ${data.dressCode||'Libre'}</p>`;
+                    div.onclick = () => openEvent(d.id, data.name);
                     list.appendChild(div);
                 });
-                lucide.createIcons();
             });
         }
 
-        // --- ACTIONS MODAL (INSPO) ---
+        // --- UPLOAD MAGIQUE SANS STORAGE (Base64) ---
+        document.getElementById('file-upload').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Afficher chargement
+            document.getElementById('upload-text').innerText = "COMPRESSION...";
+            document.getElementById('upload-loader').classList.remove('hidden');
+
+            const reader = new FileReader();
+            reader.onload = (readerEvent) => {
+                const img = new Image();
+                img.onload = async () => {
+                    // COMPRESSION DE L'IMAGE (Pour ne pas faire exploser la base de données)
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    
+                    // On réduit la taille max à 800px
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Conversion en texte (Base64) qualité moyenne (0.6)
+                    const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+
+                    try {
+                        // Envoi direct dans Firestore (Pas besoin de Storage !)
+                        await addDoc(collection(db, 'events', currentEventId, 'inspos'), {
+                            url: dataUrl, // L'image est stockée ici en texte
+                            user: currentUser.email.split('@')[0], 
+                            email: currentUser.email,
+                            createdAt: Date.now(), 
+                            likes: [], 
+                            comments: []
+                        });
+                        alert("Photo ajoutée ! 📸");
+                    } catch (error) {
+                        alert("Erreur : Photo trop lourde ou connexion lente.");
+                    } finally {
+                        document.getElementById('upload-text').innerText = "AJOUTER UNE PHOTO";
+                        document.getElementById('upload-loader').classList.add('hidden');
+                        document.getElementById('file-upload').value = "";
+                    }
+                }
+                img.src = readerEvent.target.result;
+            }
+            reader.readAsDataURL(file);
+        };
+
         function openEvent(id, name) {
             currentEventId = id;
             document.getElementById('modal-title').innerText = name;
             document.getElementById('modal-event').classList.remove('hidden');
-            loadInspos(id);
-        }
-
-        document.getElementById('btn-close-modal').onclick = () => {
-            document.getElementById('modal-event').classList.add('hidden');
-        };
-
-        document.getElementById('btn-add-inspo').onclick = async () => {
-            const url = document.getElementById('inspo-link').value;
-            if(!url) return alert("Il faut un lien !");
             
-            await addDoc(collection(db, 'events', currentEventId, 'inspos'), {
-                url: url,
-                user: currentUser.email.split('@')[0],
-                email: currentUser.email,
-                createdAt: Date.now(),
-                likes: [],
-                comments: []
-            });
-            document.getElementById('inspo-link').value = "";
-        };
-
-        function loadInspos(eventId) {
-            const q = query(collection(db, 'events', eventId, 'inspos'), orderBy('createdAt', 'desc'));
-            
-            onSnapshot(q, (snapshot) => {
-                const grid = document.getElementById('inspo-grid');
-                grid.innerHTML = "";
-
-                if(snapshot.empty) {
-                    grid.innerHTML = "<div class='text-center opacity-40 mt-10 text-xs font-bold uppercase'>Ajoute la première tenue !</div>";
-                    return;
-                }
-
-                snapshot.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const likes = data.likes || [];
-                    const isLiked = likes.includes(currentUser.uid);
+            onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => {
+                const grid = document.getElementById('inspo-grid'); grid.innerHTML = "";
+                if(snap.empty) grid.innerHTML = "<p class='text-center opacity-40 text-xs font-bold mt-10'>Aucune photo... Clique en bas ! 👇</p>";
+                
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    const isLiked = (d.likes || []).includes(currentUser.uid);
                     
                     const div = document.createElement('div');
-                    div.className = "card p-0 overflow-hidden border-none shadow-lg";
+                    div.className = "card p-0 overflow-hidden shadow-lg border-none";
                     div.innerHTML = `
                         <div class="relative">
-                            <img src="${data.url}" class="w-full max-h-96 object-cover" onerror="this.src='https://placehold.co/400?text=Image+Invalide'">
-                            <div class="absolute top-2 right-2">
-                                ${data.email === currentUser.email ? `<button class="btn-del bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                            </div>
+                            <img src="${d.url}" class="w-full max-h-96 object-cover bg-gray-100">
+                            ${d.email === currentUser.email ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                         </div>
-                        <div class="p-4 bg-white">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="text-[10px] font-black uppercase text-pink-300">Posté par ${data.user}</span>
+                        <div class="p-3">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[10px] font-black uppercase text-pink-300">${d.user}</span>
                                 <div class="flex gap-3">
-                                    <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-400'}">
-                                        <i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-pink-500' : ''}"></i> ${likes.length}
-                                    </button>
-                                    <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-400 hover:text-pink-500">
-                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Avis
-                                    </button>
+                                    <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-400'}"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button>
+                                    <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-400"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button>
                                 </div>
                             </div>
-                            <div class="space-y-1 ${(data.comments || []).length === 0 ? 'hidden' : 'block bg-pink-50/50 p-2 rounded-lg'}">
-                                ${(data.comments || []).map(c => `<div class="text-[11px] leading-tight"><span class="font-bold text-pink-700">${c.user}:</span> ${c.text}</div>`).join('')}
-                            </div>
+                            <div class="space-y-1 bg-pink-50/50 rounded-lg p-2 ${(d.comments||[]).length===0?'hidden':''}">${(d.comments||[]).map(c=>`<div class="text-[10px]"><span class="font-bold text-pink-700">${c.user}:</span> ${c.text}</div>`).join('')}</div>
                         </div>
                     `;
-
-                    // Listeners
-                    if(data.email === currentUser.email) {
-                        div.querySelector('.btn-del').onclick = () => {
-                            if(confirm('Supprimer ?')) deleteDoc(doc(db, 'events', eventId, 'inspos', docSnap.id));
-                        };
-                    }
                     
-                    div.querySelector('.btn-like').onclick = async () => {
-                        const ref = doc(db, 'events', eventId, 'inspos', docSnap.id);
-                        if(isLiked) await updateDoc(ref, { likes: arrayRemove(currentUser.uid) });
-                        else await updateDoc(ref, { likes: arrayUnion(currentUser.uid) });
-                    };
-
-                    div.querySelector('.btn-comment').onclick = async () => {
-                        const txt = prompt("Ton avis ?");
-                        if(txt) await updateDoc(doc(db, 'events', eventId, 'inspos', docSnap.id), {
-                            comments: arrayUnion({ user: currentUser.email.split('@')[0], text: txt })
-                        });
-                    };
-
+                    if(d.email === currentUser.email) div.querySelector('.btn-del').onclick = () => { if(confirm('Supprimer ?')) deleteDoc(doc(db,'events',id,'inspos',docSnap.id)); };
+                    div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',id,'inspos',docSnap.id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); };
+                    div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',id,'inspos',docSnap.id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); };
                     grid.appendChild(div);
                 });
                 lucide.createIcons();
             });
         }
-
-        // Init Icons
+        
+        document.getElementById('btn-close-modal').onclick = () => document.getElementById('modal-event').classList.add('hidden');
         lucide.createIcons();
     </script>
 </body>
