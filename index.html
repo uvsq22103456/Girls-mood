@@ -162,7 +162,7 @@
     </div>
 
     <script>
-        // --- 0. GESTION DU THÈME (CLAIR / SOMBRE) ---
+        // --- 0. GESTION DU THÈME ---
         function toggleTheme() {
             const body = document.body;
             const btn = document.getElementById('theme-btn');
@@ -171,29 +171,29 @@
             if (isDark) {
                 body.removeAttribute('data-theme');
                 localStorage.setItem('theme', 'light');
-                btn.innerText = "🌙"; // Devient une lune (pour passer en sombre)
+                btn.innerText = "🌙";
             } else {
                 body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
-                btn.innerText = "☀️"; // Devient un soleil (pour passer en clair)
+                btn.innerText = "☀️";
             }
         }
-        
-        // Charger le thème préféré au démarrage
         if (localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
             document.getElementById('theme-btn').innerText = "☀️";
         }
 
-        // --- 1. FIREBASE CONFIG ---
+        // --- 1. FIREBASE CONFIG (PROJET LOUDRESSING2) ---
         const firebaseConfig = {
-            apiKey: "AIzaSyBIHjJKZj_Bqw1XjHfJo4X3GWrA6GNLU8I",
-            authDomain: "bu-buddy-4bafe.firebaseapp.com",
-            projectId: "bu-buddy-4bafe",
-            storageBucket: "bu-buddy-4bafe.firebasestorage.app",
-            messagingSenderId: "1083707246516",
-            appId: "1:1083707246516:web:c6c78c199c7eb9323554e1"
+          apiKey: "AIzaSyAgLVoCp13V7xanqR7oO_2uGwiTpCaFpAY",
+          authDomain: "loudressing2.firebaseapp.com",
+          projectId: "loudressing2",
+          storageBucket: "loudressing2.firebasestorage.app",
+          messagingSenderId: "877161870915",
+          appId: "1:877161870915:web:963f894f6be7d63bc006f6",
+          measurementId: "G-X7ST2SFTZ9"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
