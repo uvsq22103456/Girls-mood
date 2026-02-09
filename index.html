@@ -20,7 +20,18 @@
         .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s; }
         .btn-primary:active { transform: scale(0.96); }
         .input-style { background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #1f2937; }
-        input[type="date"] { color: #1f2937; -webkit-appearance: none; }
+        
+        /* FORCE DATE NOIRE IPHONE */
+        input[type="date"] {
+            -webkit-appearance: none;
+            background-color: white;
+            color: #1f2937; /* Gris foncé */
+            opacity: 1;
+            display: block;
+            min-height: 50px; /* Zone de clic plus grande */
+        }
+        input[type="date"]::-webkit-date-and-time-value { text-align: left; color: #1f2937; }
+
         .card { background: #fff; padding: 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); position: relative; }
         .nav-btn { opacity: 0.5; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
@@ -31,6 +42,9 @@
         /* Sub-Tabs Privé */
         .sub-tab { flex: 1; text-align: center; padding: 10px; font-size: 11px; font-weight: 800; uppercase; color: #ec4899; opacity: 0.6; border-bottom: 2px solid transparent; }
         .sub-tab-active { opacity: 1; border-bottom: 2px solid #ec4899; }
+        
+        .vs-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; border: 3px solid transparent; }
+        .info-bubble { font-size: 10px; color: #db2777; background: #fce7f3; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; border: 1px dashed #fbcfe8; }
     </style>
 </head>
 <body>
@@ -65,7 +79,10 @@
                 <div class="card bg-white border-pink-100">
                     <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2 tracking-widest">✨ Créer un dossier</h3>
                     <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style mb-2 text-xs">
-                    <div class="flex gap-2"><input type="date" id="event-date" class="input-style w-1/2 text-xs mb-0"><input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs mb-0"></div>
+                    <div class="flex gap-2">
+                        <input type="date" id="event-date" class="input-style w-1/2 text-xs mb-0" style="color:#1f2937;">
+                        <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs mb-0">
+                    </div>
                     <button id="btn-create" class="btn-primary mt-2 text-xs py-3">Créer</button>
                 </div>
                 <div class="flex items-center justify-between mt-6 mb-2 pl-2 pr-2"><h3 class="text-xs font-bold uppercase text-pink-300">Vos Dossiers</h3><span class="text-[10px] bg-pink-100 text-pink-500 px-2 py-1 rounded-full font-bold" id="event-count">0</span></div>
@@ -195,7 +212,7 @@
         <div class="bg-white w-full rounded-2xl p-5 shadow-2xl">
             <h3 class="font-black text-lg text-pink-500 mb-4">Modifier le dossier</h3>
             <input type="text" id="edit-event-name" class="input-style mb-2">
-            <input type="date" id="edit-event-date" class="input-style mb-2">
+            <input type="date" id="edit-event-date" class="input-style mb-2" style="color:#1f2937;">
             <input type="text" id="edit-event-dress" class="input-style mb-4">
             <div class="flex gap-2">
                 <button onclick="saveEventEdit()" class="flex-1 btn-primary py-3 text-xs">Enregistrer</button>
@@ -297,9 +314,17 @@
 
         document.getElementById('file-upload').onchange = (e) => { const f=e.target.files[0]; if(!f) return; document.getElementById('upload-text').innerText = "..."; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=800;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);pendingBase64=c.toDataURL("image/jpeg",0.5);document.getElementById('upload-text').innerText="OK !";};i.src=e.target.result;};r.readAsDataURL(f);};
 
-        document.getElementById('btn-submit-inspo').onclick = async () => { const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value; if(!finalUrl) return alert("Manque photo/lien !"); const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] }; try { await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); } };
+        document.getElementById('btn-submit-inspo').onclick = async () => {
+            const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value;
+            if(!finalUrl) return alert("Manque photo/lien !");
+            const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
+            try { await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); }
+        };
 
-        function renderInspos() { const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; } filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons(); }
+        function renderInspos() { const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter);
+            if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; }
+            filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons();
+        }
         window.cycleCat = async (id, cur, isP) => { const cs=['Tenue','Haut','Bas','Chaussures','Sac','Accessoire']; const n=cs[(cs.indexOf(cur)+1)%cs.length]; if(confirm(`Changer en ${n}?`)) await updateDoc(doc(db,isP?'private_dressing':'events',isP?id:currentEventId,isP?null:'inspos',isP?null:id),{category:n}); };
         function createInspoCard(id, d, isPrivate) { const isLiked = (d.likes || []).includes(currentUser.uid); const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6"; div.innerHTML = `<div class="relative"><img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50"><div onclick="cycleCat('${id}','${d.category||'Tenue'}',${isPrivate})" class="absolute top-2 left-2 ${isPrivate?'bg-indigo-500':'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm cursor-pointer">${d.category||'Tenue'} ↻</div>${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div><div class="p-4"><div class="flex justify-between items-center mb-3"><span class="text-[10px] font-black uppercase ${isPrivate?'text-indigo-400':'text-pink-400'} tracking-wider">${isPrivate?'Mon Dressing':'Posté par '+d.user}</span>${!isPrivate ? `<div class="flex gap-3"><button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button><button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button></div>` : '<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>'}</div>${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}<div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}</div></div>`; if(d.email === currentUser.email || isPrivate) div.querySelector('.btn-del').onclick = () => { if(confirm('Supprimer ?')) deleteDoc(doc(db, isPrivate?'private_dressing':'events', isPrivate?id:currentEventId, isPrivate?null:'inspos', isPrivate?null:id)); }; if(!isPrivate) { div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); }; div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); }; } return div; }
         
