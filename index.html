@@ -15,32 +15,35 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
         
-        :root { --primary: #ec4899; }
+        :root { --primary: #ec4899; --bg: #fdf2f8; }
         body { 
             font-family: 'Outfit', sans-serif; 
-            background-color: #fdf2f8; 
+            background-color: var(--bg); 
             color: #831843;
             height: 100dvh;
             display: flex; flex-direction: column; overflow: hidden;
             -webkit-tap-highlight-color: transparent;
         }
         .btn-primary {
-            background: var(--primary); color: white; font-weight: 800; padding: 16px; border-radius: 16px;
-            text-transform: uppercase; width: 100%; letter-spacing: 1px;
+            background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px;
+            text-transform: uppercase; width: 100%; letter-spacing: 0.5px;
             box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s;
         }
         .btn-primary:active { transform: scale(0.96); }
         .input-style {
-            background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 16px; border-radius: 16px;
-            outline: none; font-weight: 600; margin-bottom: 12px;
+            background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px;
+            outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px;
         }
         .card {
-            background: #fff; padding: 20px; border-radius: 24px;
-            box-shadow: 0 4px 20px rgba(236, 72, 153, 0.05); margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.5);
+            background: #fff; padding: 16px; border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8);
         }
-        /* Loader */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #ec4899; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .nav-btn { opacity: 0.5; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
+        .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Bulle info */
+        .info-bubble { font-size: 10px; color: #db2777; background: #fce7f3; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; border: 1px dashed #fbcfe8; }
     </style>
 </head>
 <body>
@@ -57,42 +60,121 @@
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
-        <header class="p-6 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-pink-100">
-            <h2 class="font-black italic text-xl text-pink-500">GIRLS MOOD</h2>
-            <button id="btn-logout" class="bg-pink-100 text-pink-600 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+        <header class="px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-pink-100">
+            <h2 class="font-black italic text-lg text-pink-500">GIRLS MOOD</h2>
+            <button id="btn-logout" class="bg-pink-50 text-pink-400 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
         </header>
 
-        <main class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
-            <div class="card bg-gradient-to-br from-white to-pink-50 border-pink-100">
-                <h3 class="text-[10px] font-black uppercase text-pink-400 mb-3 tracking-widest">✨ Nouveau Dossier</h3>
-                <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style mb-2">
-                <div class="flex gap-2">
-                    <input type="date" id="event-date" class="input-style w-1/2 text-xs">
-                    <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs">
+        <main class="flex-1 overflow-hidden relative">
+            
+            <section id="tab-events" class="h-full overflow-y-auto p-4 pb-24 no-scrollbar">
+                
+                <div id="countdown-card" class="card bg-gradient-to-r from-pink-500 to-rose-400 text-white border-none shadow-lg mb-6 hidden transform transition-all">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p>
+                            <h3 id="next-event-name" class="font-black text-xl tracking-tight">...</h3>
+                        </div>
+                        <div class="text-right bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm">
+                            <span id="days-left" class="text-2xl font-black">0</span>
+                            <p class="text-[8px] font-bold uppercase tracking-widest">Jours</p>
+                        </div>
+                    </div>
                 </div>
-                <button id="btn-create" class="btn-primary mt-2 text-xs">Créer</button>
-            </div>
-            <div id="events-list" class="space-y-4 mt-6"></div>
+
+                <div class="card bg-white border-pink-100">
+                    <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2 tracking-widest">✨ Créer un Dossier</h3>
+                    <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style mb-2 text-xs">
+                    <div class="flex gap-2">
+                        <input type="date" id="event-date" class="input-style w-1/2 text-xs mb-0">
+                        <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs mb-0">
+                    </div>
+                    <button id="btn-create" class="btn-primary mt-2 text-xs py-3">Créer</button>
+                </div>
+
+                <div class="flex items-center justify-between mt-6 mb-2 pl-2 pr-2">
+                    <h3 class="text-xs font-bold uppercase text-pink-300">Vos Dossiers</h3>
+                    <span class="text-[10px] bg-pink-100 text-pink-500 px-2 py-1 rounded-full font-bold" id="event-count">0</span>
+                </div>
+                <div id="events-list" class="space-y-3"></div>
+            </section>
+
+            <section id="tab-chat" class="hidden h-full flex flex-col pb-20 bg-[#fdf2f8]">
+                <div class="p-4 pb-0">
+                    <div class="bg-pink-100 p-3 rounded-xl flex items-center gap-3 mb-2">
+                        <div class="bg-white p-2 rounded-full text-pink-500"><i data-lucide="coffee" class="w-5 h-5"></i></div>
+                        <div>
+                            <h3 class="font-bold text-sm text-pink-900">Le Salon</h3>
+                            <p class="text-[10px] text-pink-500">Discussion générale des copines 💅</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
+                <div class="p-3 border-t border-pink-100 flex gap-2 bg-white">
+                    <input type="text" id="chat-input" placeholder="Un petit ragot ?" class="input-style mb-0 rounded-full px-5 border-none bg-slate-50">
+                    <button id="btn-send-chat" class="bg-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-90 transition"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></button>
+                </div>
+            </section>
+
         </main>
+
+        <nav class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-pink-100 flex justify-around py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
+            <button onclick="switchTab('events')" id="nav-events" class="nav-btn nav-active">
+                <i data-lucide="calendar-heart" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold uppercase">Agenda</span>
+            </button>
+            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn">
+                <i data-lucide="message-circle-heart" class="w-6 h-6"></i>
+                <span class="text-[9px] font-bold uppercase">Le Salon</span>
+            </button>
+        </nav>
     </div>
 
     <div id="modal-event" class="hidden fixed inset-0 z-[100] bg-[#fdf2f8] flex flex-col">
-        <div class="p-6 bg-white/80 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0">
-            <h2 id="modal-title" class="font-black text-2xl italic uppercase text-pink-600 truncate pr-4">Titre</h2>
+        <div class="p-4 bg-white/90 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0 z-10">
+            <h2 id="modal-title" class="font-black text-xl italic uppercase text-pink-600 truncate pr-4">Titre</h2>
             <button id="btn-close-modal" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-4 pb-24 no-scrollbar">
-            <div id="inspo-grid" class="space-y-5 mb-10"></div>
-        </div>
+        <div class="flex-1 overflow-y-auto p-4 pb-40 no-scrollbar">
+            <div class="card border-pink-200 bg-white">
+                <h3 class="text-[10px] font-black uppercase text-pink-500 mb-3">Ajouter une tenue</h3>
+                
+                <div class="flex gap-2 mb-3">
+                    <button onclick="toggleUploadMode('link')" id="tab-link" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition">Lien Internet</button>
+                    <button onclick="toggleUploadMode('photo')" id="tab-photo" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition">Galerie Photo</button>
+                </div>
 
-        <div class="absolute bottom-0 w-full p-4 bg-white border-t border-pink-100 pb-8">
-            <label for="file-upload" class="btn-primary flex items-center justify-center gap-2 cursor-pointer active:scale-95">
-                <i data-lucide="camera" class="w-5 h-5"></i>
-                <span id="upload-text">AJOUTER UNE PHOTO</span>
-                <div id="upload-loader" class="loader hidden"></div>
-            </label>
-            <input type="file" id="file-upload" accept="image/*" class="hidden">
+                <div id="mode-link" class="block">
+                    <input type="text" id="inspo-link-url" placeholder="Coller le lien de l'image..." class="input-style text-xs mb-2">
+                    <div class="info-bubble">
+                        💡 <b>Astuce :</b> Sur Google/Pinterest, fais un <u>appui long</u> sur l'image et choisis "Copier l'adresse de l'image".
+                    </div>
+                </div>
+
+                <div id="mode-photo" class="hidden">
+                    <label for="file-upload" class="btn-primary bg-slate-50 text-pink-500 border border-pink-200 flex items-center justify-center gap-2 cursor-pointer active:scale-95 py-4 mb-2 shadow-sm">
+                        <i data-lucide="image-plus" class="w-5 h-5"></i>
+                        <span id="upload-text" class="text-xs">OUVRIR MA GALERIE</span>
+                    </label>
+                    <input type="file" id="file-upload" accept="image/*" class="hidden">
+                    <div class="info-bubble">
+                        ⚠️ <b>Note :</b> La qualité est légèrement réduite pour que l'appli reste rapide. C'est normal !
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-3 border-t border-dashed border-pink-100">
+                    <div class="flex items-center gap-2 mb-1">
+                        <i data-lucide="shopping-bag" class="w-3 h-3 text-pink-400"></i>
+                        <span class="text-[10px] font-bold uppercase text-pink-400">Lien Shopping (Facultatif)</span>
+                    </div>
+                    <input type="text" id="inspo-shop-link" placeholder="Lien Vinted, Zara, Asos..." class="input-style text-xs mb-0 border-pink-100">
+                </div>
+
+                <button id="btn-submit-inspo" class="btn-primary text-xs py-3 mt-3">POSTER LA TENUE</button>
+            </div>
+
+            <div id="inspo-grid" class="space-y-6 mt-4"></div>
         </div>
     </div>
 
@@ -116,8 +198,10 @@
         
         let currentUser = null;
         let currentEventId = null;
+        let pendingBase64 = null;
+        let uploadMode = 'link';
 
-        // AUTH
+        // --- AUTH ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
@@ -125,6 +209,7 @@
                 document.getElementById('app-view').classList.remove('hidden');
                 document.getElementById('app-view').classList.add('flex');
                 loadEvents();
+                loadChat();
             } else {
                 document.getElementById('auth-view').classList.remove('hidden');
                 document.getElementById('app-view').classList.add('hidden');
@@ -136,89 +221,178 @@
         document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){alert(e.message);} };
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
-        // CREATE EVENT
+        // --- NAVIGATION & UI ---
+        window.switchTab = (tab) => {
+            document.getElementById('tab-events').classList.add('hidden');
+            document.getElementById('tab-chat').classList.add('hidden');
+            document.getElementById('tab-'+tab).classList.remove('hidden');
+            document.getElementById('nav-events').classList.remove('nav-active');
+            document.getElementById('nav-chat').classList.remove('nav-active');
+            document.getElementById('nav-'+tab).classList.add('nav-active');
+        };
+
+        window.toggleUploadMode = (mode) => {
+            uploadMode = mode;
+            if(mode === 'link') {
+                document.getElementById('mode-link').classList.remove('hidden');
+                document.getElementById('mode-photo').classList.add('hidden');
+                document.getElementById('tab-link').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition";
+                document.getElementById('tab-photo').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
+                pendingBase64 = null; // Reset photo
+            } else {
+                document.getElementById('mode-link').classList.add('hidden');
+                document.getElementById('mode-photo').classList.remove('hidden');
+                document.getElementById('tab-link').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition";
+                document.getElementById('tab-photo').className = "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition";
+            }
+        };
+
+        // --- EVENTS ---
         document.getElementById('btn-create').onclick = async () => {
             const name = document.getElementById('event-name').value;
             if (!name) return alert("Nom manquant !");
             await addDoc(collection(db, 'events'), {
                 name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value,
-                creator: currentUser.email, createdAt: Date.now()
+                creator: currentUser.email, createdAt: Date.now(), participants: [currentUser.email.split('@')[0]]
             });
             document.getElementById('event-name').value = "";
             alert("✅ Dossier créé !");
         };
 
         function loadEvents() {
-            onSnapshot(query(collection(db, 'events'), orderBy('createdAt', 'desc')), (snap) => {
+            onSnapshot(query(collection(db, 'events'), orderBy('date', 'asc')), (snap) => {
                 const list = document.getElementById('events-list'); list.innerHTML = "";
+                document.getElementById('event-count').innerText = snap.size;
+                
+                let closestEvent = null;
+                const now = new Date(); now.setHours(0,0,0,0);
+
                 snap.forEach(d => {
                     const data = d.data();
+                    const participants = data.participants || [];
+                    const isParticipating = participants.includes(currentUser.email.split('@')[0]);
+
+                    // Countdown Logic
+                    if(data.date) {
+                        const evtDate = new Date(data.date);
+                        if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) {
+                            closestEvent = { name: data.name, date: evtDate };
+                        }
+                    }
+
                     const div = document.createElement('div');
-                    div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer";
-                    div.innerHTML = `<h3 class="font-black text-xl text-pink-900 capitalize">${data.name}</h3><p class="text-xs text-pink-400 font-bold mt-1">📅 ${data.date||'...'} • 👗 ${data.dressCode||'Libre'}</p>`;
-                    div.onclick = () => openEvent(d.id, data.name);
+                    div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-black text-lg text-pink-900 capitalize">${data.name}</h3>
+                            <button class="btn-part text-[9px] font-bold uppercase px-2 py-1 rounded-full border ${isParticipating ? 'bg-green-100 text-green-600 border-green-200' : 'bg-slate-50 text-slate-400 border-slate-200'}">
+                                ${isParticipating ? '✅ Je viens' : '❌ Pas sûre'}
+                            </button>
+                        </div>
+                        <div class="flex gap-2 text-xs text-pink-400 font-bold mb-2">
+                            <span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span>
+                            <span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span>
+                        </div>
+                        <div class="text-[9px] text-slate-400 font-medium overflow-hidden text-ellipsis whitespace-nowrap">
+                            👯‍♀️ <b>${participants.length}</b> Copines : ${participants.join(', ')}
+                        </div>
+                    `;
+                    
+                    // Click Zones (Body -> Open, Button -> Participate)
+                    div.onclick = (e) => {
+                        if(!e.target.closest('.btn-part')) openEvent(d.id, data.name);
+                    };
+
+                    div.querySelector('.btn-part').onclick = async () => {
+                        const ref = doc(db, 'events', d.id);
+                        const name = currentUser.email.split('@')[0];
+                        if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) });
+                        else await updateDoc(ref, { participants: arrayUnion(name) });
+                    };
+
                     list.appendChild(div);
                 });
+
+                if(closestEvent) {
+                    const diff = Math.ceil((closestEvent.date - now) / (1000 * 60 * 60 * 24));
+                    document.getElementById('next-event-name').innerText = closestEvent.name;
+                    document.getElementById('days-left').innerText = diff;
+                    document.getElementById('countdown-card').classList.remove('hidden');
+                } else {
+                    document.getElementById('countdown-card').classList.add('hidden');
+                }
+                lucide.createIcons();
             });
         }
 
-        // --- UPLOAD MAGIQUE SANS STORAGE (Base64) ---
+        // --- CHAT ---
+        document.getElementById('btn-send-chat').onclick = async () => {
+            const txt = document.getElementById('chat-input').value;
+            if(txt) {
+                await addDoc(collection(db, 'chat'), { text: txt, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() });
+                document.getElementById('chat-input').value = "";
+            }
+        };
+
+        function loadChat() {
+            onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => {
+                const box = document.getElementById('chat-box');
+                box.innerHTML = snap.docs.map(d => {
+                    const data = d.data();
+                    const isMe = data.email === currentUser.email;
+                    return `
+                    <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2">
+                        <span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${isMe ? 'Moi' : data.user}</span>
+                        <div class="${isMe ? 'bg-pink-500 text-white rounded-br-none' : 'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">
+                            ${data.text}
+                        </div>
+                    </div>`;
+                }).join('');
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        // --- UPLOAD LOGIC ---
         document.getElementById('file-upload').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            // Afficher chargement
-            document.getElementById('upload-text').innerText = "COMPRESSION...";
-            document.getElementById('upload-loader').classList.remove('hidden');
-
+            document.getElementById('upload-text').innerText = "PHOTO PRÊTE !";
             const reader = new FileReader();
-            reader.onload = (readerEvent) => {
+            reader.onload = (re) => {
                 const img = new Image();
-                img.onload = async () => {
-                    // COMPRESSION DE L'IMAGE (Pour ne pas faire exploser la base de données)
-                    const canvas = document.createElement('canvas');
-                    let width = img.width;
-                    let height = img.height;
-                    
-                    // On réduit la taille max à 800px
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                    } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
-                    }
-                    
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Conversion en texte (Base64) qualité moyenne (0.6)
-                    const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
-
-                    try {
-                        // Envoi direct dans Firestore (Pas besoin de Storage !)
-                        await addDoc(collection(db, 'events', currentEventId, 'inspos'), {
-                            url: dataUrl, // L'image est stockée ici en texte
-                            user: currentUser.email.split('@')[0], 
-                            email: currentUser.email,
-                            createdAt: Date.now(), 
-                            likes: [], 
-                            comments: []
-                        });
-                        alert("Photo ajoutée ! 📸");
-                    } catch (error) {
-                        alert("Erreur : Photo trop lourde ou connexion lente.");
-                    } finally {
-                        document.getElementById('upload-text').innerText = "AJOUTER UNE PHOTO";
-                        document.getElementById('upload-loader').classList.add('hidden');
-                        document.getElementById('file-upload').value = "";
-                    }
+                img.onload = () => {
+                    const cvs = document.createElement('canvas');
+                    let w = img.width; let h = img.height; const M = 800;
+                    if(w>h){if(w>M){h*=M/w;w=M;}}else{if(h>M){w*=M/h;h=M;}}
+                    cvs.width=w; cvs.height=h;
+                    cvs.getContext("2d").drawImage(img,0,0,w,h);
+                    pendingBase64 = cvs.toDataURL("image/jpeg", 0.6);
                 }
-                img.src = readerEvent.target.result;
+                img.src = re.target.result;
             }
             reader.readAsDataURL(file);
+        };
+
+        document.getElementById('btn-submit-inspo').onclick = async () => {
+            const linkUrl = document.getElementById('inspo-link-url').value;
+            const shopLink = document.getElementById('inspo-shop-link').value;
+            const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : linkUrl;
+
+            if(!finalUrl) return alert("Il manque la photo ou le lien !");
+
+            try {
+                await addDoc(collection(db, 'events', currentEventId, 'inspos'), {
+                    url: finalUrl, shop: shopLink, user: currentUser.email.split('@')[0], email: currentUser.email,
+                    createdAt: Date.now(), likes: [], comments: []
+                });
+                // Reset form
+                document.getElementById('inspo-link-url').value = "";
+                document.getElementById('inspo-shop-link').value = "";
+                document.getElementById('file-upload').value = "";
+                document.getElementById('upload-text').innerText = "OUVRIR MA GALERIE";
+                pendingBase64 = null;
+                alert("✨ C'est posté !");
+            } catch(e) { alert("Erreur: " + e.message); }
         };
 
         function openEvent(id, name) {
@@ -228,28 +402,33 @@
             
             onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => {
                 const grid = document.getElementById('inspo-grid'); grid.innerHTML = "";
-                if(snap.empty) grid.innerHTML = "<p class='text-center opacity-40 text-xs font-bold mt-10'>Aucune photo... Clique en bas ! 👇</p>";
+                if(snap.empty) grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-pink-50 rounded-xl'>Vide... Sois la première ! 💅</div>";
                 
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
                     const isLiked = (d.likes || []).includes(currentUser.uid);
                     
                     const div = document.createElement('div');
-                    div.className = "card p-0 overflow-hidden shadow-lg border-none";
+                    div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6";
                     div.innerHTML = `
                         <div class="relative">
-                            <img src="${d.url}" class="w-full max-h-96 object-cover bg-gray-100">
-                            ${d.email === currentUser.email ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                            <img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50">
+                            ${d.email === currentUser.email ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
                         </div>
-                        <div class="p-3">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[10px] font-black uppercase text-pink-300">${d.user}</span>
+                        <div class="p-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-[10px] font-black uppercase text-pink-400 tracking-wider">Posté par ${d.user}</span>
                                 <div class="flex gap-3">
-                                    <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-400'}"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button>
-                                    <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-400"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button>
+                                    <button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button>
+                                    <button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button>
                                 </div>
                             </div>
-                            <div class="space-y-1 bg-pink-50/50 rounded-lg p-2 ${(d.comments||[]).length===0?'hidden':''}">${(d.comments||[]).map(c=>`<div class="text-[10px]"><span class="font-bold text-pink-700">${c.user}:</span> ${c.text}</div>`).join('')}</div>
+                            
+                            ${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-3 hover:bg-pink-50 hover:text-pink-500 hover:border-pink-200 transition flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER L'ARTICLE</a>` : ''}
+
+                            <div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">
+                                ${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}
+                            </div>
                         </div>
                     `;
                     
