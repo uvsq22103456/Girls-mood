@@ -4,85 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GIRLS MOOD</title>
-    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ec4899">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
-        
         :root { --primary: #ec4899; --bg: #fdf2f8; }
         body { font-family: 'Outfit', sans-serif; background-color: var(--bg); color: #831843; height: 100dvh; display: flex; flex-direction: column; overflow: hidden; -webkit-tap-highlight-color: transparent; }
         .btn-primary { background: var(--primary); color: white; font-weight: 800; padding: 14px; border-radius: 14px; text-transform: uppercase; width: 100%; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3); transition: transform 0.1s; }
         .btn-primary:active { transform: scale(0.96); }
         .input-style { background: #fff; border: 1px solid #fbcfe8; width: 100%; padding: 14px; border-radius: 14px; outline: none; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #1f2937; }
-        
-        /* FORCE DATE NOIRE IPHONE */
-        input[type="date"] {
-            -webkit-appearance: none;
-            background-color: white;
-            color: #1f2937; /* Gris foncé */
-            opacity: 1;
-            display: block;
-            min-height: 50px; /* Zone de clic plus grande */
-        }
-        input[type="date"]::-webkit-date-and-time-value { text-align: left; color: #1f2937; }
-
+        input[type="date"] { -webkit-appearance: none; background-color: white; color: #1f2937; opacity: 1; display: block; min-height: 50px; }
         .card { background: #fff; padding: 16px; border-radius: 20px; box-shadow: 0 2px 10px rgba(236, 72, 153, 0.05); margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.8); position: relative; }
         .nav-btn { opacity: 0.5; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 2px; }
         .nav-active { opacity: 1; color: var(--primary); transform: translateY(-2px); }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; transition: 0.2s; background: #fff; color: #ec4899; border: 1px solid #fbcfe8; }
         .filter-active { background: #ec4899; color: white; border-color: #ec4899; }
-        
-        /* Sub-Tabs Privé */
         .sub-tab { flex: 1; text-align: center; padding: 10px; font-size: 11px; font-weight: 800; uppercase; color: #ec4899; opacity: 0.6; border-bottom: 2px solid transparent; }
         .sub-tab-active { opacity: 1; border-bottom: 2px solid #ec4899; }
-        
         .vs-img { width: 100%; height: 120px; object-fit: cover; border-radius: 12px; border: 3px solid transparent; }
         .info-bubble { font-size: 10px; color: #db2777; background: #fce7f3; padding: 8px; border-radius: 8px; margin-bottom: 10px; line-height: 1.4; border: 1px dashed #fbcfe8; }
     </style>
 </head>
 <body>
-
     <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8] transition-opacity duration-300">
-        <div class="text-center mb-10">
-            <h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS MOOD</h1>
-            <p class="text-xs font-bold uppercase tracking-widest text-pink-400 mt-2">Le QG des copines</p>
-        </div>
-        <input type="email" id="email" placeholder="Email..." class="input-style">
-        <input type="password" id="password" placeholder="Mot de passe..." class="input-style">
-        <button id="btn-login" class="btn-primary mt-4">Entrer</button>
-        <button id="btn-register" class="text-xs text-center w-full text-pink-400 font-bold underline mt-6 py-4">Créer un compte</button>
+        <div class="text-center mb-10"><h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS MOOD</h1><p class="text-xs font-bold uppercase tracking-widest text-pink-400 mt-2">Le QG des copines</p></div>
+        <input type="email" id="email" placeholder="Email..." class="input-style"><input type="password" id="password" placeholder="Mot de passe..." class="input-style">
+        <button id="btn-login" class="btn-primary mt-4">Entrer</button><button id="btn-register" class="text-xs text-center w-full text-pink-400 font-bold underline mt-6 py-4">Créer un compte</button>
         <p id="auth-error" class="text-center text-red-500 text-xs font-bold mt-2 hidden"></p>
     </section>
 
     <div id="app-view" class="hidden flex-col h-full relative">
         <header class="px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-20 border-b border-pink-100">
-            <h2 class="font-black italic text-lg text-pink-500">GIRLS MOOD</h2>
-            <button id="btn-logout" class="bg-pink-50 text-pink-400 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+            <h2 class="font-black italic text-lg text-pink-500">GIRLS MOOD</h2><button id="btn-logout" class="bg-pink-50 text-pink-400 p-2 rounded-full"><i data-lucide="log-out" class="w-4 h-4"></i></button>
         </header>
-
         <main class="flex-1 overflow-hidden relative">
-            
             <section id="tab-events" class="h-full overflow-y-auto p-4 pb-24 no-scrollbar">
                 <div id="countdown-card" class="card bg-gradient-to-r from-pink-500 to-rose-400 text-white border-none shadow-lg mb-6 hidden">
-                    <div class="flex justify-between items-center">
-                        <div><p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p><h3 id="next-event-name" class="font-black text-xl tracking-tight">...</h3></div>
-                        <div class="text-right bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm"><span id="days-left" class="text-2xl font-black">0</span><p class="text-[8px] font-bold uppercase tracking-widest">Jours</p></div>
-                    </div>
+                    <div class="flex justify-between items-center"><div><p class="text-[10px] font-bold uppercase opacity-80 mb-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> Prochain Event</p><h3 id="next-event-name" class="font-black text-xl tracking-tight">...</h3></div><div class="text-right bg-white/20 px-4 py-2 rounded-xl backdrop-blur-sm"><span id="days-left" class="text-2xl font-black">0</span><p class="text-[8px] font-bold uppercase tracking-widest">Jours</p></div></div>
                 </div>
                 <div class="card bg-white border-pink-100">
                     <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2 tracking-widest">✨ Créer un dossier</h3>
                     <input type="text" id="event-name" placeholder="Nom (ex: Anniv Lou)" class="input-style mb-2 text-xs">
-                    <div class="flex gap-2">
-                        <input type="date" id="event-date" class="input-style w-1/2 text-xs mb-0" style="color:#1f2937;">
-                        <input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs mb-0">
-                    </div>
+                    <div class="flex gap-2"><input type="date" id="event-date" class="input-style w-1/2 text-xs mb-0" style="color:#1f2937;"><input type="text" id="event-dress" placeholder="Dress Code" class="input-style w-1/2 text-xs mb-0"></div>
                     <button id="btn-create" class="btn-primary mt-2 text-xs py-3">Créer</button>
                 </div>
                 <div class="flex items-center justify-between mt-6 mb-2 pl-2 pr-2"><h3 class="text-xs font-bold uppercase text-pink-300">Vos Dossiers</h3><span class="text-[10px] bg-pink-100 text-pink-500 px-2 py-1 rounded-full font-bold" id="event-count">0</span></div>
@@ -95,46 +62,20 @@
                     <button onclick="switchPrivateTab('wishlist')" id="sub-wishlist" class="sub-tab">🎁 WISHLIST</button>
                     <button onclick="switchPrivateTab('accounts')" id="sub-accounts" class="sub-tab">📱 COMPTES</button>
                 </div>
-
                 <div id="view-private-outfits" class="flex-1 overflow-y-auto p-4 no-scrollbar">
-                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl mb-4 flex justify-between items-center">
-                        <div><h3 class="font-bold text-sm text-indigo-900">Mes Tenues</h3><p class="text-[10px] text-indigo-400">Captures & Idées</p></div>
-                        <button onclick="openModal(null, 'Mon Dressing', true)" class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-90"><i data-lucide="plus" class="w-5 h-5"></i></button>
-                    </div>
-                    <div class="overflow-x-auto no-scrollbar flex gap-2 mb-4">
-                        <button onclick="setPrivateFilter('all')" class="filter-btn filter-active bg-indigo-500 border-indigo-500" id="p-filter-all">✨ Tout</button>
-                        <button onclick="setPrivateFilter('Tenue')" class="filter-btn" id="p-filter-Tenue">👗 Tenues</button>
-                        <button onclick="setPrivateFilter('Haut')" class="filter-btn" id="p-filter-Haut">👚 Hauts</button>
-                        <button onclick="setPrivateFilter('Bas')" class="filter-btn" id="p-filter-Bas">👖 Bas</button>
-                        <button onclick="setPrivateFilter('Chaussures')" class="filter-btn" id="p-filter-Chaussures">👠 Shoes</button>
-                    </div>
+                    <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl mb-4 flex justify-between items-center"><div><h3 class="font-bold text-sm text-indigo-900">Mes Tenues</h3><p class="text-[10px] text-indigo-400">Captures & Idées</p></div><button onclick="openModal(null, 'Mon Dressing', true)" class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-90"><i data-lucide="plus" class="w-5 h-5"></i></button></div>
+                    <div class="overflow-x-auto no-scrollbar flex gap-2 mb-4"><button onclick="setPrivateFilter('all')" class="filter-btn filter-active bg-indigo-500 border-indigo-500" id="p-filter-all">✨ Tout</button><button onclick="setPrivateFilter('Tenue')" class="filter-btn" id="p-filter-Tenue">👗 Tenues</button><button onclick="setPrivateFilter('Haut')" class="filter-btn" id="p-filter-Haut">👚 Hauts</button><button onclick="setPrivateFilter('Bas')" class="filter-btn" id="p-filter-Bas">👖 Bas</button><button onclick="setPrivateFilter('Chaussures')" class="filter-btn" id="p-filter-Chaussures">👠 Shoes</button></div>
                     <div id="private-grid" class="space-y-4"></div>
                 </div>
-
                 <div id="view-private-wishlist" class="hidden flex-1 overflow-y-auto p-4 no-scrollbar">
                     <div class="card bg-white border-pink-100 mb-6">
-                        <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Ajouter un Wish</h3>
-                        <input type="text" id="wish-name" placeholder="Nom de l'article..." class="input-style text-xs">
-                        <input type="text" id="wish-link" placeholder="Lien Vinted/Zara..." class="input-style text-xs">
-                        <div class="flex gap-2 items-center mt-1">
-                            <label for="wish-upload" class="flex-1 bg-slate-100 text-slate-500 text-[10px] font-bold py-3 rounded-xl text-center cursor-pointer">📸 PHOTO</label>
-                            <input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)">
-                            <button onclick="addWish()" class="flex-1 btn-primary py-3 text-xs">AJOUTER</button>
-                        </div>
-                        <p id="wish-status" class="text-[9px] text-center mt-2 text-pink-300 hidden">Photo OK !</p>
+                        <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Ajouter un Wish</h3><input type="text" id="wish-name" placeholder="Nom..." class="input-style text-xs"><input type="text" id="wish-link" placeholder="Lien..." class="input-style text-xs">
+                        <div class="flex gap-2 items-center mt-1"><label for="wish-upload" class="flex-1 bg-slate-100 text-slate-500 text-[10px] font-bold py-3 rounded-xl text-center cursor-pointer">📸 PHOTO</label><input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)"><button onclick="addWish()" class="flex-1 btn-primary py-3 text-xs">AJOUTER</button></div><p id="wish-status" class="text-[9px] text-center mt-2 text-pink-300 hidden">Photo OK !</p>
                     </div>
                     <div id="wishlist-grid" class="grid grid-cols-2 gap-3"></div>
                 </div>
-
                 <div id="view-private-accounts" class="hidden flex-1 overflow-y-auto p-4 no-scrollbar">
-                    <div class="card bg-white border-pink-100 mb-6">
-                        <h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Ajouter un Compte</h3>
-                        <div class="flex gap-2">
-                            <input type="text" id="acc-name" placeholder="@Nom..." class="input-style text-xs mb-0 w-1/3">
-                            <input type="text" id="acc-link" placeholder="Lien Profil..." class="input-style text-xs mb-0 flex-1">
-                        </div>
-                        <button onclick="addAccount()" class="btn-primary mt-2 py-3 text-xs">ENREGISTRER</button>
-                    </div>
+                    <div class="card bg-white border-pink-100 mb-6"><h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Ajouter un Compte</h3><div class="flex gap-2"><input type="text" id="acc-name" placeholder="@Nom..." class="input-style text-xs mb-0 w-1/3"><input type="text" id="acc-link" placeholder="Lien..." class="input-style text-xs mb-0 flex-1"></div><button onclick="addAccount()" class="btn-primary mt-2 py-3 text-xs">ENREGISTRER</button></div>
                     <div id="accounts-list" class="space-y-2"></div>
                 </div>
             </section>
@@ -142,40 +83,19 @@
             <section id="tab-chat" class="hidden h-full flex flex-col pb-20 bg-[#fdf2f8]">
                 <div class="p-4 pb-0"><div class="bg-white p-3 rounded-xl shadow-sm border border-pink-100 flex items-center gap-3"><div class="bg-pink-100 p-2 rounded-full text-pink-500"><i data-lucide="coffee" class="w-4 h-4"></i></div><div><h3 class="font-bold text-sm text-pink-900">Le Salon</h3><p class="text-[10px] text-pink-500">Discussion & Sondages 💅</p></div></div></div>
                 <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-                <div class="p-3 border-t border-pink-100 flex gap-2 bg-white items-center">
-                    <button onclick="openVSModal()" class="bg-indigo-100 text-indigo-500 p-3 rounded-full active:scale-90 font-black text-xs shadow-sm">VS</button>
-                    <button onclick="askPoll()" class="bg-pink-100 text-pink-500 p-3 rounded-full active:scale-90 shadow-sm"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button>
-                    <input type="text" id="chat-input" placeholder="Ragots..." class="input-style mb-0 rounded-full px-5 border-none bg-slate-50">
-                    <button id="btn-send-chat" class="bg-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-90 transition"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></button>
-                </div>
+                <div class="p-3 border-t border-pink-100 flex gap-2 bg-white items-center"><button onclick="openVSModal()" class="bg-indigo-100 text-indigo-500 p-3 rounded-full active:scale-90 font-black text-xs shadow-sm">VS</button><button onclick="askPoll()" class="bg-pink-100 text-pink-500 p-3 rounded-full active:scale-90 shadow-sm"><i data-lucide="bar-chart-2" class="w-5 h-5"></i></button><input type="text" id="chat-input" placeholder="Ragots..." class="input-style mb-0 rounded-full px-5 border-none bg-slate-50"><button id="btn-send-chat" class="bg-pink-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-md active:scale-90 transition"><i data-lucide="send" class="w-5 h-5 ml-0.5"></i></button></div>
             </section>
         </main>
-
-        <nav class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-pink-100 flex justify-around py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]">
-            <button onclick="switchTab('events')" id="nav-events" class="nav-btn nav-active"><i data-lucide="calendar-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Agenda</span></button>
-            <button onclick="switchTab('dressing')" id="nav-dressing" class="nav-btn"><i data-lucide="shirt" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Privé</span></button>
-            <button onclick="switchTab('chat')" id="nav-chat" class="nav-btn"><i data-lucide="message-circle-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Salon</span></button>
-        </nav>
+        <nav class="absolute bottom-0 w-full bg-white/95 backdrop-blur-md border-t border-pink-100 flex justify-around py-4 pb-6 z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.02)]"><button onclick="switchTab('events')" id="nav-events" class="nav-btn nav-active"><i data-lucide="calendar-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Agenda</span></button><button onclick="switchTab('dressing')" id="nav-dressing" class="nav-btn"><i data-lucide="shirt" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Privé</span></button><button onclick="switchTab('chat')" id="nav-chat" class="nav-btn"><i data-lucide="message-circle-heart" class="w-6 h-6"></i><span class="text-[9px] font-bold uppercase">Salon</span></button></nav>
     </div>
 
     <div id="modal-event" class="hidden fixed inset-0 z-[100] bg-[#fdf2f8] flex flex-col">
-        <div class="p-4 bg-white/90 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0 z-10">
-            <h2 id="modal-title" class="font-black text-xl italic uppercase text-pink-600 truncate pr-4">Titre</h2>
-            <button onclick="closeModal('modal-event')" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button>
-        </div>
-        <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20">
-            <button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button>
-            <button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button>
-            <button onclick="setFilter('Haut')" class="filter-btn" id="filter-Haut">👚 Hauts</button>
-            <button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button>
-            <button onclick="setFilter('Chaussures')" class="filter-btn" id="filter-Chaussures">👠 Shoes</button>
-        </div>
+        <div class="p-4 bg-white/90 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0 z-10"><h2 id="modal-title" class="font-black text-xl italic uppercase text-pink-600 truncate pr-4">Titre</h2><button onclick="closeModal('modal-event')" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+        <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20"><button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button><button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button><button onclick="setFilter('Haut')" class="filter-btn" id="filter-Haut">👚 Hauts</button><button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button><button onclick="setFilter('Chaussures')" class="filter-btn" id="filter-Chaussures">👠 Shoes</button></div>
         <div class="flex-1 overflow-y-auto p-4 pb-40 no-scrollbar">
             <div class="card border-pink-200 bg-white">
                 <h3 class="text-[10px] font-black uppercase text-pink-500 mb-3">Ajouter une pièce</h3>
-                <select id="inspo-category" class="input-style text-xs mb-3 bg-pink-50 border-pink-200 font-bold text-pink-700">
-                    <option value="Tenue">✨ Tenue Entière</option><option value="Haut">👚 Haut</option><option value="Bas">👖 Bas</option><option value="Chaussures">👠 Chaussures</option><option value="Sac">👜 Sac à main</option><option value="Accessoire">💍 Accessoire</option>
-                </select>
+                <select id="inspo-category" class="input-style text-xs mb-3 bg-pink-50 border-pink-200 font-bold text-pink-700"><option value="Tenue">✨ Tenue Entière</option><option value="Haut">👚 Haut</option><option value="Bas">👖 Bas</option><option value="Chaussures">👠 Chaussures</option><option value="Sac">👜 Sac à main</option><option value="Accessoire">💍 Accessoire</option></select>
                 <div class="flex gap-2 mb-3"><button onclick="toggleUploadMode('link')" id="tab-link" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition">Lien</button><button onclick="toggleUploadMode('photo')" id="tab-photo" class="flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition">Galerie</button></div>
                 <div id="mode-link" class="block"><input type="text" id="inspo-link-url" placeholder="Coller le lien..." class="input-style text-xs mb-2"><div class="text-[9px] text-pink-400 italic">💡 Astuce : Appui long sur l'image Google > Copier l'adresse.</div></div>
                 <div id="mode-photo" class="hidden"><label for="file-upload" class="btn-primary bg-slate-50 text-pink-500 border border-pink-200 flex items-center justify-center gap-2 cursor-pointer active:scale-95 py-4 mb-2 shadow-sm"><i data-lucide="image-plus" class="w-5 h-5"></i><span id="upload-text" class="text-xs">GALERIE</span></label><input type="file" id="file-upload" accept="image/*" class="hidden"></div>
@@ -187,39 +107,11 @@
     </div>
 
     <div id="modal-vs" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6">
-            <h3 class="font-black text-xl text-center text-pink-600 mb-4 italic">DUEL DE MODE 🔥</h3>
-            <div class="flex gap-2 mb-4">
-                <div class="flex-1">
-                    <label for="vs-file-1" class="cursor-pointer">
-                        <div id="vs-preview-1" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold">PHOTO A</div>
-                    </label>
-                    <input type="file" id="vs-file-1" class="hidden" accept="image/*" onchange="previewVS(1, this)">
-                </div>
-                <div class="flex-1">
-                    <label for="vs-file-2" class="cursor-pointer">
-                        <div id="vs-preview-2" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold">PHOTO B</div>
-                    </label>
-                    <input type="file" id="vs-file-2" class="hidden" accept="image/*" onchange="previewVS(2, this)">
-                </div>
-            </div>
-            <button onclick="sendVS()" class="btn-primary text-xs mb-2">LANCER LE DUEL</button>
-            <button onclick="closeModal('modal-vs')" class="w-full text-center text-xs text-slate-400 font-bold py-2">Annuler</button>
-        </div>
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6"><h3 class="font-black text-xl text-center text-pink-600 mb-4 italic">DUEL DE MODE 🔥</h3><div class="flex gap-2 mb-4"><div class="flex-1"><label for="vs-file-1" class="cursor-pointer"><div id="vs-preview-1" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold">PHOTO A</div></label><input type="file" id="vs-file-1" class="hidden" accept="image/*" onchange="previewVS(1, this)"></div><div class="flex-1"><label for="vs-file-2" class="cursor-pointer"><div id="vs-preview-2" class="h-32 bg-slate-100 rounded-xl flex items-center justify-center border-2 border-dashed border-slate-300 text-slate-400 text-xs font-bold">PHOTO B</div></label><input type="file" id="vs-file-2" class="hidden" accept="image/*" onchange="previewVS(2, this)"></div></div><button onclick="sendVS()" class="btn-primary text-xs mb-2">LANCER LE DUEL</button><button onclick="closeModal('modal-vs')" class="w-full text-center text-xs text-slate-400 font-bold py-2">Annuler</button></div>
     </div>
 
     <div id="modal-edit-event" class="hidden fixed inset-0 z-[110] bg-black/50 flex items-center justify-center p-6 backdrop-blur-sm">
-        <div class="bg-white w-full rounded-2xl p-5 shadow-2xl">
-            <h3 class="font-black text-lg text-pink-500 mb-4">Modifier le dossier</h3>
-            <input type="text" id="edit-event-name" class="input-style mb-2">
-            <input type="date" id="edit-event-date" class="input-style mb-2" style="color:#1f2937;">
-            <input type="text" id="edit-event-dress" class="input-style mb-4">
-            <div class="flex gap-2">
-                <button onclick="saveEventEdit()" class="flex-1 btn-primary py-3 text-xs">Enregistrer</button>
-                <button onclick="deleteEvent()" class="bg-red-500 text-white rounded-xl px-4 py-3 font-bold text-xs">Supprimer</button>
-            </div>
-            <button onclick="document.getElementById('modal-edit-event').classList.add('hidden')" class="w-full text-center text-xs text-slate-400 mt-3 font-bold">Annuler</button>
-        </div>
+        <div class="bg-white w-full rounded-2xl p-5 shadow-2xl"><h3 class="font-black text-lg text-pink-500 mb-4">Modifier le dossier</h3><input type="text" id="edit-event-name" class="input-style mb-2"><input type="date" id="edit-event-date" class="input-style mb-2" style="color:#1f2937;"><input type="text" id="edit-event-dress" class="input-style mb-4"><div class="flex gap-2"><button onclick="saveEventEdit()" class="flex-1 btn-primary py-3 text-xs">Enregistrer</button><button onclick="deleteEvent()" class="bg-red-500 text-white rounded-xl px-4 py-3 font-bold text-xs">Supprimer</button></div><button onclick="document.getElementById('modal-edit-event').classList.add('hidden')" class="w-full text-center text-xs text-slate-400 mt-3 font-bold">Annuler</button></div>
     </div>
 
     <script type="module">
@@ -235,10 +127,8 @@
         let vsImg1 = null; let vsImg2 = null; let eventToEditId = null;
 
         onAuthStateChanged(auth, (user) => {
-            if (user) { 
-                currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); 
-                loadEvents(); loadChat(); loadPrivateDressing(); loadWishlist(); loadAccounts();
-            } else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
+            if (user) { currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); loadEvents(); loadChat(); loadPrivateDressing(); loadWishlist(); loadAccounts(); } 
+            else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
         });
 
         document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
@@ -246,12 +136,7 @@
         document.getElementById('btn-logout').onclick = () => signOut(auth);
 
         window.switchTab = (tab) => { document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden')); document.getElementById('tab-'+tab).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('nav-'+tab).classList.add('nav-active'); };
-        window.switchPrivateTab = (sub) => {
-            document.getElementById('view-private-outfits').classList.add('hidden'); document.getElementById('view-private-wishlist').classList.add('hidden'); document.getElementById('view-private-accounts').classList.add('hidden');
-            document.getElementById('view-private-'+sub).classList.remove('hidden');
-            document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('sub-tab-active')); document.getElementById('sub-'+sub).classList.add('sub-tab-active');
-        };
-
+        window.switchPrivateTab = (sub) => { document.getElementById('view-private-outfits').classList.add('hidden'); document.getElementById('view-private-wishlist').classList.add('hidden'); document.getElementById('view-private-accounts').classList.add('hidden'); document.getElementById('view-private-'+sub).classList.remove('hidden'); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('sub-tab-active')); document.getElementById('sub-'+sub).classList.add('sub-tab-active'); };
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
         window.toggleUploadMode = (mode) => { uploadMode = mode; document.getElementById('mode-link').classList.toggle('hidden', mode !== 'link'); document.getElementById('mode-photo').classList.toggle('hidden', mode !== 'photo'); document.getElementById('tab-link').className = mode === 'link' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition"; document.getElementById('tab-photo').className = mode === 'photo' ? "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-500 text-white transition" : "flex-1 py-2 text-[10px] font-bold uppercase rounded-lg bg-pink-50 text-pink-400 transition"; };
         window.setFilter = (cat) => { currentFilter = cat; document.querySelectorAll('#filter-bar .filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-'+cat).classList.add('filter-active'); renderInspos(); };
@@ -259,22 +144,7 @@
 
         document.getElementById('btn-create').onclick = async () => { const name = document.getElementById('event-name').value; if (!name) return alert("Nom ?"); await addDoc(collection(db, 'events'), { name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value, creator: currentUser.email, createdAt: Date.now(), participants: [currentUser.email.split('@')[0]] }); document.getElementById('event-name').value = ""; alert("✅ Créé !"); };
 
-        function loadEvents() {
-            onSnapshot(query(collection(db, 'events'), orderBy('date', 'asc')), (snap) => {
-                const list = document.getElementById('events-list'); list.innerHTML = ""; document.getElementById('event-count').innerText = snap.size; let closestEvent = null; const now = new Date(); now.setHours(0,0,0,0);
-                snap.forEach(d => {
-                    const data = d.data(); const participants = data.participants || []; const isParticipating = participants.includes(currentUser.email.split('@')[0]); const isCreator = data.creator === currentUser.email;
-                    if(data.date) { const evtDate = new Date(data.date); if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) closestEvent = { name: data.name, date: evtDate }; }
-                    const div = document.createElement('div'); div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden";
-                    div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize flex-1">${data.name}</h3>${isCreator ? `<button class="btn-settings text-slate-300 hover:text-pink-500 px-2" onclick="openEditEvent('${d.id}', '${data.name}', '${data.date}', '${data.dressCode}')">⚙️</button>`:''}<button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`;
-                    div.onclick = (e) => { if(!e.target.closest('.btn-part') && !e.target.closest('.btn-settings')) openModal(d.id, data.name, false); };
-                    div.querySelector('.btn-part').onclick = async () => { const ref = doc(db, 'events', d.id); const name = currentUser.email.split('@')[0]; if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) }); else await updateDoc(ref, { participants: arrayUnion(name) }); };
-                    list.appendChild(div);
-                });
-                if(closestEvent) { const diff = Math.ceil((closestEvent.date - now) / (1000 * 60 * 60 * 24)); document.getElementById('next-event-name').innerText = closestEvent.name; document.getElementById('days-left').innerText = diff; document.getElementById('countdown-card').classList.remove('hidden'); } else document.getElementById('countdown-card').classList.add('hidden');
-                lucide.createIcons();
-            });
-        }
+        function loadEvents() { onSnapshot(query(collection(db, 'events'), orderBy('date', 'asc')), (snap) => { const list = document.getElementById('events-list'); list.innerHTML = ""; document.getElementById('event-count').innerText = snap.size; let closestEvent = null; const now = new Date(); now.setHours(0,0,0,0); snap.forEach(d => { const data = d.data(); const participants = data.participants || []; const isParticipating = participants.includes(currentUser.email.split('@')[0]); const isCreator = data.creator === currentUser.email; if(data.date) { const evtDate = new Date(data.date); if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) closestEvent = { name: data.name, date: evtDate }; } const div = document.createElement('div'); div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden"; div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize flex-1">${data.name}</h3>${isCreator ? `<button class="btn-settings text-slate-300 hover:text-pink-500 px-2" onclick="openEditEvent('${d.id}', '${data.name}', '${data.date}', '${data.dressCode}')">⚙️</button>`:''}<button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`; div.onclick = (e) => { if(!e.target.closest('.btn-part') && !e.target.closest('.btn-settings')) openModal(d.id, data.name, false); }; div.querySelector('.btn-part').onclick = async () => { const ref = doc(db, 'events', d.id); const name = currentUser.email.split('@')[0]; if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) }); else await updateDoc(ref, { participants: arrayUnion(name) }); }; list.appendChild(div); }); if(closestEvent) { const diff = Math.ceil((closestEvent.date - now) / (1000 * 60 * 60 * 24)); document.getElementById('next-event-name').innerText = closestEvent.name; document.getElementById('days-left').innerText = diff; document.getElementById('countdown-card').classList.remove('hidden'); } else document.getElementById('countdown-card').classList.add('hidden'); lucide.createIcons(); }); }
 
         window.openEditEvent = (id, name, date, dress) => { eventToEditId = id; document.getElementById('edit-event-name').value = name; document.getElementById('edit-event-date').value = date; document.getElementById('edit-event-dress').value = dress; document.getElementById('modal-edit-event').classList.remove('hidden'); };
         window.saveEventEdit = async () => { if(eventToEditId) { await updateDoc(doc(db,'events',eventToEditId), { name: document.getElementById('edit-event-name').value, date: document.getElementById('edit-event-date').value, dressCode: document.getElementById('edit-event-dress').value }); document.getElementById('modal-edit-event').classList.add('hidden'); } };
@@ -283,12 +153,10 @@
         function loadPrivateDressing() { onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => { allPrivateInspos = []; snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); }); renderPrivateInspos(); }); }
         function renderPrivateInspos() { const grid = document.getElementById('private-grid'); grid.innerHTML = ""; const filtered = allPrivateInspos.filter(i => currentPrivateFilter === 'all' || i.category === currentPrivateFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Vide...</div>"; return; } filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, true)); }); lucide.createIcons(); }
 
-        // WISHLIST LOGIC
         window.handleWishUpload = (input) => { const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);wishBase64=c.toDataURL("image/jpeg",0.5);document.getElementById('wish-status').classList.remove('hidden');};i.src=e.target.result;};r.readAsDataURL(f);};
         window.addWish = async () => { const n=document.getElementById('wish-name').value; const l=document.getElementById('wish-link').value; if(!n || (!l && !wishBase64)) return alert("Nom + Lien/Photo requis !"); await addDoc(collection(db, 'private_wishlist'), { uid: currentUser.uid, name: n, link: l, image: wishBase64, createdAt: Date.now() }); document.getElementById('wish-name').value=""; document.getElementById('wish-link').value=""; document.getElementById('wish-upload').value=""; wishBase64=null; document.getElementById('wish-status').classList.add('hidden'); };
         function loadWishlist() { onSnapshot(query(collection(db, 'private_wishlist'), where('uid','==',currentUser.uid), orderBy('createdAt','desc')), (snap) => { const g=document.getElementById('wishlist-grid'); g.innerHTML=""; snap.forEach(d => { const da=d.data(); g.innerHTML+=`<div class="bg-white rounded-xl shadow-sm p-2 text-center border border-pink-50 relative"><button onclick="deleteDoc(doc(db,'private_wishlist','${d.id}'))" class="absolute top-1 right-1 text-red-300 font-bold text-xs">x</button>${da.image?`<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">`:''}<div class="font-bold text-xs text-slate-800 truncate">${da.name}</div>${da.link?`<a href="${da.link}" target="_blank" class="text-[9px] text-pink-500 font-bold uppercase">Acheter</a>`:''}</div>`; }); }); }
 
-        // ACCOUNTS LOGIC
         window.addAccount = async () => { const n=document.getElementById('acc-name').value; const l=document.getElementById('acc-link').value; if(n&&l) await addDoc(collection(db, 'private_accounts'), { uid: currentUser.uid, name: n, link: l, createdAt: Date.now() }); document.getElementById('acc-name').value=""; document.getElementById('acc-link').value=""; };
         function loadAccounts() { onSnapshot(query(collection(db, 'private_accounts'), where('uid','==',currentUser.uid), orderBy('createdAt','desc')), (snap) => { const l=document.getElementById('accounts-list'); l.innerHTML=""; snap.forEach(d => { const da=d.data(); l.innerHTML+=`<div class="flex justify-between items-center bg-white p-3 rounded-xl border border-pink-50"><a href="${da.link}" target="_blank" class="font-bold text-xs text-indigo-900">${da.name}</a><button onclick="deleteDoc(doc(db,'private_accounts','${d.id}'))" class="text-xs text-slate-300">Suppr</button></div>`; }); }); }
 
@@ -299,34 +167,57 @@
         window.previewVS = (num, input) => { const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;ctx.drawImage(i,0,0,w,h);const b64=c.toDataURL("image/jpeg",0.6);document.getElementById(`vs-preview-${num}`).innerHTML="";document.getElementById(`vs-preview-${num}`).style.backgroundImage=`url(${b64})`;document.getElementById(`vs-preview-${num}`).style.backgroundSize='cover';if(num===1)vsImg1=b64;else vsImg2=b64;};i.src=e.target.result;};r.readAsDataURL(f);};
         window.sendVS = async () => { if(!vsImg1||!vsImg2)return alert("2 photos !"); await addDoc(collection(db, 'chat'), { type: 'vs', img1: vsImg1, img2: vsImg2, votes: { v1: [], v2: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); document.getElementById('modal-vs').classList.add('hidden'); vsImg1=null; vsImg2=null; };
 
-        function loadChat() { onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => { const b=document.getElementById('chat-box'); b.innerHTML=snap.docs.map(d => { const da=d.data(); const me=da.email===currentUser.email; 
-            if(da.type==='poll') { const y=(da.votes.yes||[]).length,n=(da.votes.no||[]).length,t=y+n,p=t===0?50:(y/t)*100; return `<div class="mb-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-100"><div class="text-[10px] font-bold text-indigo-400 mb-1">SONDAGE DE ${da.user}</div><h3 class="font-bold text-indigo-900 mb-3 text-sm">${da.question}</h3><div class="flex gap-1 h-8 rounded-lg overflow-hidden"><div onclick="vote('${d.id}','yes')" class="bg-green-400 flex items-center justify-center text-white font-bold text-[10px]" style="width:${p}%">OUI (${y})</div><div onclick="vote('${d.id}','no')" class="bg-red-400 flex items-center justify-center text-white font-bold text-[10px] flex-1">NON (${n})</div></div></div>`; }
-            if(da.type==='vs') { const v1=(da.votes.v1||[]).length,v2=(da.votes.v2||[]).length; return `<div class="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-pink-100"><div class="text-[10px] font-bold text-pink-400 mb-2 text-center">DUEL DE ${da.user} 🔥</div><div class="flex gap-2"><div onclick="voteVS('${d.id}','v1')" class="flex-1 relative cursor-pointer"><img src="${da.img1}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v1}</div></div><div class="flex items-center text-xs font-black text-slate-300">VS</div><div onclick="voteVS('${d.id}','v2')" class="flex-1 relative cursor-pointer"><img src="${da.img2}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v2}</div></div></div></div>`; }
-            return `<div class="flex flex-col ${me?'items-end':'items-start'} mb-2"><span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${me?'Moi':da.user}</span><div class="${me?'bg-pink-500 text-white rounded-br-none':'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${da.text}</div></div>`; }).join(''); b.scrollTop=b.scrollHeight; }); }
-
+        function loadChat() { onSnapshot(query(collection(db, 'chat'), orderBy('date', 'asc')), (snap) => { const b=document.getElementById('chat-box'); b.innerHTML=snap.docs.map(d => { const da=d.data(); const me=da.email===currentUser.email; if(da.type==='poll') { const y=(da.votes.yes||[]).length,n=(da.votes.no||[]).length,t=y+n,p=t===0?50:(y/t)*100; return `<div class="mb-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-100"><div class="text-[10px] font-bold text-indigo-400 mb-1">SONDAGE DE ${da.user}</div><h3 class="font-bold text-indigo-900 mb-3 text-sm">${da.question}</h3><div class="flex gap-1 h-8 rounded-lg overflow-hidden"><div onclick="vote('${d.id}','yes')" class="bg-green-400 flex items-center justify-center text-white font-bold text-[10px]" style="width:${p}%">OUI (${y})</div><div onclick="vote('${d.id}','no')" class="bg-red-400 flex items-center justify-center text-white font-bold text-[10px] flex-1">NON (${n})</div></div></div>`; } if(da.type==='vs') { const v1=(da.votes.v1||[]).length,v2=(da.votes.v2||[]).length; return `<div class="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-pink-100"><div class="text-[10px] font-bold text-pink-400 mb-2 text-center">DUEL DE ${da.user} 🔥</div><div class="flex gap-2"><div onclick="voteVS('${d.id}','v1')" class="flex-1 relative cursor-pointer"><img src="${da.img1}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v1}</div></div><div class="flex items-center text-xs font-black text-slate-300">VS</div><div onclick="voteVS('${d.id}','v2')" class="flex-1 relative cursor-pointer"><img src="${da.img2}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v2}</div></div></div></div>`; } return `<div class="flex flex-col ${me?'items-end':'items-start'} mb-2"><span class="text-[9px] text-pink-400 font-bold px-1 uppercase">${me?'Moi':da.user}</span><div class="${me?'bg-pink-500 text-white rounded-br-none':'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${da.text}</div></div>`; }).join(''); b.scrollTop=b.scrollHeight; }); }
         window.vote = async (id, c) => { const r=doc(db,'chat',id);const u=currentUser.email.split('@')[0];if(c==='yes')await updateDoc(r,{"votes.yes":arrayUnion(u),"votes.no":arrayRemove(u)});else await updateDoc(r,{"votes.no":arrayUnion(u),"votes.yes":arrayRemove(u)}); };
         window.voteVS = async (id, c) => { const r=doc(db,'chat',id);const u=currentUser.email.split('@')[0];if(c==='v1')await updateDoc(r,{"votes.v1":arrayUnion(u),"votes.v2":arrayRemove(u)});else await updateDoc(r,{"votes.v2":arrayUnion(u),"votes.v1":arrayRemove(u)}); };
 
-        window.openModal = (id, name, isPrivate) => { currentEventId = id; isPrivateMode = isPrivate; document.getElementById('modal-title').innerText = name; document.getElementById('modal-event').classList.remove('hidden');
-            if(isPrivate) { document.getElementById('filter-bar').classList.add('hidden'); document.getElementById('inspo-grid').innerHTML = ""; document.getElementById('inspo-grid').classList.add('hidden'); } 
-            else { document.getElementById('filter-bar').classList.remove('hidden'); document.getElementById('inspo-grid').classList.remove('hidden'); currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active'); onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => { allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); }); renderInspos(); }); }
-        };
-
+        window.openModal = (id, name, isPrivate) => { currentEventId = id; isPrivateMode = isPrivate; document.getElementById('modal-title').innerText = name; document.getElementById('modal-event').classList.remove('hidden'); if(isPrivate) { document.getElementById('filter-bar').classList.add('hidden'); document.getElementById('inspo-grid').innerHTML = ""; document.getElementById('inspo-grid').classList.add('hidden'); } else { document.getElementById('filter-bar').classList.remove('hidden'); document.getElementById('inspo-grid').classList.remove('hidden'); currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active'); onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => { allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); }); renderInspos(); }); } };
         document.getElementById('file-upload').onchange = (e) => { const f=e.target.files[0]; if(!f) return; document.getElementById('upload-text').innerText = "..."; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=800;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);pendingBase64=c.toDataURL("image/jpeg",0.5);document.getElementById('upload-text').innerText="OK !";};i.src=e.target.result;};r.readAsDataURL(f);};
 
+        // --- CORRECTION DU BUG "NULL" ---
         document.getElementById('btn-submit-inspo').onclick = async () => {
             const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value;
             if(!finalUrl) return alert("Manque photo/lien !");
             const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
-            try { await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); }
+            try { 
+                // Correction : On utilise la bonne collection selon le mode
+                let collectionRef;
+                if(isPrivateMode) {
+                    collectionRef = collection(db, 'private_dressing'); // Pas d'ID parent
+                } else {
+                    collectionRef = collection(db, 'events', currentEventId, 'inspos'); // Avec ID parent
+                }
+                await addDoc(collectionRef, data);
+                
+                // Reset
+                document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; 
+                alert("✨ Posté !"); 
+                if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); 
+            } catch(e) { alert("Erreur: " + e.message); }
         };
 
-        function renderInspos() { const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter);
-            if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; }
-            filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons();
+        function renderInspos() { const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; } filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons(); }
+        window.cycleCat = async (id, cur, isP) => { const cs=['Tenue','Haut','Bas','Chaussures','Sac','Accessoire']; const n=cs[(cs.indexOf(cur)+1)%cs.length]; if(confirm(`Changer en ${n}?`)) { const docRef = isP ? doc(db, 'private_dressing', id) : doc(db, 'events', currentEventId, 'inspos', id); await updateDoc(docRef,{category:n}); } };
+        
+        function createInspoCard(id, d, isPrivate) { 
+            const isLiked = (d.likes || []).includes(currentUser.uid); 
+            const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6"; 
+            div.innerHTML = `<div class="relative"><img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50"><div onclick="cycleCat('${id}','${d.category||'Tenue'}',${isPrivate})" class="absolute top-2 left-2 ${isPrivate?'bg-indigo-500':'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm cursor-pointer">${d.category||'Tenue'} ↻</div>${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div><div class="p-4"><div class="flex justify-between items-center mb-3"><span class="text-[10px] font-black uppercase ${isPrivate?'text-indigo-400':'text-pink-400'} tracking-wider">${isPrivate?'Mon Dressing':'Posté par '+d.user}</span>${!isPrivate ? `<div class="flex gap-3"><button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button><button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button></div>` : '<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>'}</div>${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}<div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}</div></div>`; 
+            
+            // Correction Delete
+            if(d.email === currentUser.email || isPrivate) div.querySelector('.btn-del').onclick = () => { 
+                if(confirm('Supprimer ?')) {
+                    const docRef = isPrivate ? doc(db, 'private_dressing', id) : doc(db, 'events', currentEventId, 'inspos', id);
+                    deleteDoc(docRef);
+                }
+            };
+            
+            if(!isPrivate) { 
+                div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); }; 
+                div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); }; 
+            } 
+            return div; 
         }
-        window.cycleCat = async (id, cur, isP) => { const cs=['Tenue','Haut','Bas','Chaussures','Sac','Accessoire']; const n=cs[(cs.indexOf(cur)+1)%cs.length]; if(confirm(`Changer en ${n}?`)) await updateDoc(doc(db,isP?'private_dressing':'events',isP?id:currentEventId,isP?null:'inspos',isP?null:id),{category:n}); };
-        function createInspoCard(id, d, isPrivate) { const isLiked = (d.likes || []).includes(currentUser.uid); const div = document.createElement('div'); div.className = "card p-0 overflow-hidden shadow-lg border-none mb-6"; div.innerHTML = `<div class="relative"><img src="${d.url}" class="w-full max-h-96 object-cover bg-slate-50"><div onclick="cycleCat('${id}','${d.category||'Tenue'}',${isPrivate})" class="absolute top-2 left-2 ${isPrivate?'bg-indigo-500':'bg-pink-500'} text-white text-[9px] font-black uppercase px-2 py-1 rounded-md shadow-sm cursor-pointer">${d.category||'Tenue'} ↻</div>${(d.email === currentUser.email || isPrivate) ? `<button class="btn-del absolute top-2 right-2 bg-black/50 text-white w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-sm"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}</div><div class="p-4"><div class="flex justify-between items-center mb-3"><span class="text-[10px] font-black uppercase ${isPrivate?'text-indigo-400':'text-pink-400'} tracking-wider">${isPrivate?'Mon Dressing':'Posté par '+d.user}</span>${!isPrivate ? `<div class="flex gap-3"><button class="btn-like flex items-center gap-1 font-bold text-xs ${isLiked ? 'text-pink-500' : 'text-slate-300'} transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked?'fill-pink-500':''}"></i> ${d.likes?.length||0}</button><button class="btn-comment flex items-center gap-1 font-bold text-xs text-slate-300 hover:text-pink-500 transition"><i data-lucide="message-circle" class="w-4 h-4"></i> Avis</button></div>` : '<span class="text-[9px] bg-indigo-100 text-indigo-500 px-2 py-1 rounded font-bold">🔒 Privé</span>'}</div>${d.shop ? `<a href="${d.shop}" target="_blank" class="block w-full text-center bg-slate-50 border border-slate-100 text-slate-600 text-[10px] font-bold py-3 rounded-xl mb-2 flex items-center justify-center gap-2"><i data-lucide="shopping-bag" class="w-3 h-3"></i> SHOPPER</a>` : ''}<div class="space-y-2 ${(d.comments||[]).length===0?'hidden':''} pt-2 border-t border-slate-50">${(d.comments||[]).map(c=>`<div class="text-[11px] bg-pink-50/50 p-2 rounded-lg"><span class="font-bold text-pink-700 uppercase text-[9px] mr-1">${c.user}</span> ${c.text}</div>`).join('')}</div></div>`; if(d.email === currentUser.email || isPrivate) div.querySelector('.btn-del').onclick = () => { if(confirm('Supprimer ?')) deleteDoc(doc(db, isPrivate?'private_dressing':'events', isPrivate?id:currentEventId, isPrivate?null:'inspos', isPrivate?null:id)); }; if(!isPrivate) { div.querySelector('.btn-like').onclick = async () => { const r = doc(db,'events',currentEventId,'inspos',id); if(isLiked) updateDoc(r,{likes:arrayRemove(currentUser.uid)}); else updateDoc(r,{likes:arrayUnion(currentUser.uid)}); }; div.querySelector('.btn-comment').onclick = async () => { const t = prompt("Ton avis ?"); if(t) updateDoc(doc(db,'events',currentEventId,'inspos',id),{comments:arrayUnion({user:currentUser.email.split('@')[0], text:t})}); }; } return div; }
         
         document.getElementById('btn-close-modal').onclick = () => document.getElementById('modal-event').classList.add('hidden');
         lucide.createIcons();
