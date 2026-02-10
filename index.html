@@ -28,9 +28,12 @@
         .vs-preview { width: 100%; height: 100px; background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 2px dashed #cbd5e1; }
         .vs-img-filled { border: none; background-size: cover; background-position: center; }
         .group-card { background: white; padding: 15px; border-radius: 16px; margin-bottom: 10px; border: 1px solid #fbcfe8; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        #error-log { display: none; background: #fee2e2; color: #991b1b; padding: 10px; font-size: 10px; position: fixed; top: 0; left: 0; width: 100%; z-index: 9999; border-bottom: 1px solid #ef4444; }
     </style>
 </head>
 <body>
+
+    <div id="error-log"></div>
 
     <section id="auth-view" class="absolute inset-0 z-50 flex flex-col justify-center px-8 bg-[#fdf2f8] transition-opacity duration-300">
         <div class="text-center mb-10"><h1 class="text-5xl font-black italic tracking-tighter text-pink-500">GIRLS MOOD</h1><p class="text-xs font-bold uppercase tracking-widest text-pink-400 mt-2">Le QG des copines</p></div>
@@ -69,7 +72,7 @@
                         <div><h3 class="font-bold text-sm text-indigo-900">Mes Tenues</h3><p class="text-[10px] text-indigo-400">Secret & Privé 🤫</p></div>
                         <button onclick="openModal(null, 'Mon Dressing', true)" class="bg-indigo-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-md active:scale-90"><i data-lucide="plus" class="w-5 h-5"></i></button>
                     </div>
-                    <div class="overflow-x-auto no-scrollbar flex gap-2 mb-4"><button onclick="setPrivateFilter('all')" class="filter-btn filter-active bg-indigo-500 border-indigo-500" id="p-filter-all">✨ Tout</button><button onclick="setPrivateFilter('Tenue')" class="filter-btn" id="p-filter-Tenue">👗 Tenues</button><button onclick="setPrivateFilter('Haut')" class="filter-btn" id="p-filter-Haut">👚 Hauts</button><button onclick="setPrivateFilter('Bas')" class="filter-btn" id="p-filter-Bas">👖 Bas</button><button onclick="setPrivateFilter('Chaussures')" class="filter-btn" id="p-filter-Chaussures">👠 Shoes</button></div>
+                    <div class="overflow-x-auto no-scrollbar flex gap-2 mb-4"><button onclick="setPrivateFilter('all')" class="filter-btn filter-active bg-indigo-500 border-indigo-500" id="p-filter-all">✨ Tout</button><button onclick="setPrivateFilter('Tenue')" class="filter-btn" id="p-filter-Tenue">👗 Tenues</button><button onclick="setPrivateFilter('Haut')" class="filter-btn" id="p-filter-Haut">👚 Hauts</button><button onclick="setPrivateFilter('Bas')" class="filter-btn" id="p-filter-Bas">👖 Bas</button></div>
                     <div id="private-grid" class="space-y-4"></div>
                 </div>
 
@@ -79,19 +82,16 @@
                         <input type="text" id="wish-name" placeholder="Nom..." class="input-style text-xs">
                         <input type="text" id="wish-link" placeholder="Lien..." class="input-style text-xs">
                         <div class="flex gap-2 items-center mt-1">
-                            <label class="flex-1 bg-slate-100 text-slate-500 text-[10px] font-bold py-3 rounded-xl text-center cursor-pointer active:bg-slate-200 transition">
-                                <i data-lucide="camera" class="w-4 h-4 inline mr-1"></i> PHOTO
-                                <input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)">
-                            </label>
+                            <label class="flex-1 bg-slate-100 text-slate-500 text-[10px] font-bold py-3 rounded-xl text-center cursor-pointer"><i data-lucide="camera" class="w-4 h-4 inline mr-1"></i> PHOTO<input type="file" id="wish-upload" class="hidden" accept="image/*" onchange="handleWishUpload(this)"></label>
                             <button onclick="addWish()" class="flex-1 btn-primary py-3 text-xs">AJOUTER</button>
                         </div>
-                        <p id="wish-status" class="text-[9px] text-center mt-2 text-pink-300 font-bold"></p>
+                        <p id="wish-status" class="text-[9px] text-center mt-2 text-pink-300 font-bold hidden"></p>
                     </div>
                     <div id="wishlist-grid" class="grid grid-cols-2 gap-3"></div>
                 </div>
 
                 <div id="view-private-accounts" class="hidden flex-1 overflow-y-auto p-4 no-scrollbar">
-                    <div class="card bg-white border-pink-100 mb-6"><h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Sauvegarder un Compte / Lien</h3><div class="flex gap-2"><input type="text" id="acc-name" placeholder="@Nom..." class="input-style text-xs mb-0 w-1/3"><input type="text" id="acc-link" placeholder="Lien TikTok/Insta..." class="input-style text-xs mb-0 flex-1"></div><button onclick="addAccount()" class="btn-primary mt-2 py-3 text-xs">ENREGISTRER</button></div>
+                    <div class="card bg-white border-pink-100 mb-6"><h3 class="text-[10px] font-black uppercase text-pink-400 mb-2">Sauvegarder un Compte</h3><div class="flex gap-2"><input type="text" id="acc-name" placeholder="@Nom..." class="input-style text-xs mb-0 w-1/3"><input type="text" id="acc-link" placeholder="Lien..." class="input-style text-xs mb-0 flex-1"></div><button onclick="addAccount()" class="btn-primary mt-2 py-3 text-xs">ENREGISTRER</button></div>
                     <div id="accounts-list" class="space-y-2"></div>
                 </div>
             </section>
@@ -102,14 +102,8 @@
                     <div id="my-groups-list" class="space-y-2 mb-6"></div>
                     <div class="border-t border-pink-200 pt-6">
                         <h3 class="text-xs font-bold text-slate-400 uppercase mb-3">Gestion</h3>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3">
-                            <input type="text" id="new-group-name" placeholder="Nom du nouveau groupe..." class="input-style">
-                            <button onclick="createGroup()" class="btn-primary text-xs">Créer un Groupe</button>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 mt-4">
-                            <input type="text" id="join-group-code" placeholder="Code d'invitation..." class="input-style">
-                            <button onclick="joinGroup()" class="btn-primary bg-slate-800 text-xs">Rejoindre</button>
-                        </div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3"><input type="text" id="new-group-name" placeholder="Nom du groupe..." class="input-style"><button onclick="createGroup()" class="btn-primary text-xs">Créer un Groupe</button></div>
+                        <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 mt-4"><input type="text" id="join-group-code" placeholder="Code..." class="input-style"><button onclick="joinGroup()" class="btn-primary bg-slate-800 text-xs">Rejoindre</button></div>
                     </div>
                 </div>
 
@@ -133,7 +127,7 @@
 
     <div id="modal-event" class="hidden fixed inset-0 z-[100] bg-[#fdf2f8] flex flex-col">
         <div class="p-4 bg-white/90 backdrop-blur-md border-b border-pink-100 flex justify-between items-center sticky top-0 z-10"><h2 id="modal-title" class="font-black text-xl italic uppercase text-pink-600 truncate pr-4">Titre</h2><button onclick="closeModal('modal-event')" class="bg-slate-100 p-2 rounded-full text-slate-500"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-        <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20"><button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button><button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button><button onclick="setFilter('Haut')" class="filter-btn" id="filter-Haut">👚 Hauts</button><button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button><button onclick="setFilter('Chaussures')" class="filter-btn" id="filter-Chaussures">👠 Shoes</button></div>
+        <div id="filter-bar" class="bg-white/80 backdrop-blur px-4 py-2 border-b border-pink-50 overflow-x-auto no-scrollbar flex gap-2 sticky top-[60px] z-20"><button onclick="setFilter('all')" class="filter-btn filter-active" id="filter-all">✨ Tout</button><button onclick="setFilter('Tenue')" class="filter-btn" id="filter-Tenue">👗 Tenues</button><button onclick="setFilter('Haut')" class="filter-btn" id="filter-Haut">👚 Hauts</button><button onclick="setFilter('Bas')" class="filter-btn" id="filter-Bas">👖 Bas</button></div>
         <div class="flex-1 overflow-y-auto p-4 pb-40 no-scrollbar">
             <div class="card border-pink-200 bg-white">
                 <h3 class="text-[10px] font-black uppercase text-pink-500 mb-3">Ajouter une pièce</h3>
@@ -155,16 +149,8 @@
 
     <div id="modal-vs" class="hidden fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-6 backdrop-blur-md">
         <div class="bg-white w-full max-w-sm rounded-3xl p-6 relative">
-            <button onclick="closeModal('modal-vs')" class="absolute top-4 right-4 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button>
-            <h3 class="font-black text-xl text-center text-pink-600 mb-6 italic">DUEL DE MODE 🔥</h3>
-            <div class="flex gap-3 mb-6">
-                <div class="flex-1 flex flex-col gap-2">
-                    <label class="vs-preview cursor-pointer active:scale-95 transition bg-slate-50" id="vs-preview-1"><span class="text-xs font-bold text-slate-400">PHOTO A</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(1, this)"></label>
-                </div>
-                <div class="flex-1 flex flex-col gap-2">
-                    <label class="vs-preview cursor-pointer active:scale-95 transition bg-slate-50" id="vs-preview-2"><span class="text-xs font-bold text-slate-400">PHOTO B</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(2, this)"></label>
-                </div>
-            </div>
+            <button onclick="closeModal('modal-vs')" class="absolute top-4 right-4 text-slate-400"><i data-lucide="x" class="w-5 h-5"></i></button><h3 class="font-black text-xl text-center text-pink-600 mb-6 italic">DUEL DE MODE 🔥</h3>
+            <div class="flex gap-3 mb-6"><div class="flex-1 flex flex-col gap-2"><label class="vs-preview cursor-pointer active:scale-95 transition bg-slate-50" id="vs-preview-1"><span class="text-xs font-bold text-slate-400">PHOTO A</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(1, this)"></label></div><div class="flex-1 flex flex-col gap-2"><label class="vs-preview cursor-pointer active:scale-95 transition bg-slate-50" id="vs-preview-2"><span class="text-xs font-bold text-slate-400">PHOTO B</span><input type="file" class="hidden" accept="image/*" onchange="previewVS(2, this)"></label></div></div>
             <button onclick="sendVS()" class="btn-primary text-xs mb-2">LANCER LE DUEL</button>
         </div>
     </div>
@@ -181,20 +167,24 @@
         
         let currentUser = null; let currentEventId = null; let pendingBase64 = null; let wishBase64 = null; let uploadMode = 'link';
         let currentFilter = 'all'; let currentPrivateFilter = 'all'; let allInspos = []; let allPrivateInspos = []; let isPrivateMode = false;
-        let vsImg1 = null; let vsImg2 = null; let eventToEditId = null;
-        let currentGroupId = null;
+        let vsImg1 = null; let vsImg2 = null; let eventToEditId = null; let currentGroupId = null;
+
+        // DEBUG
+        window.onerror = function(msg, url, line) { const e=document.getElementById('error-log');e.style.display='block';e.innerHTML+=`Err: ${msg} (L${line})<br>`; };
 
         onAuthStateChanged(auth, (user) => {
-            if (user) { 
-                currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); 
-                loadEvents(); loadPrivateDressing(); loadWishlist(); loadAccounts(); loadGroups();
-            } else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
+            if (user) { currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); loadEvents(); loadPrivateDressing(); loadWishlist(); loadAccounts(); loadGroups(); } 
+            else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
         });
 
+        // GLOBAL FUNCS FOR HTML
+        window.deleteWish = async (id) => { if(confirm("Supprimer ?")) await deleteDoc(doc(db,'private_wishlist',id)); };
+        window.deleteAccount = async (id) => { if(confirm("Supprimer ?")) await deleteDoc(doc(db,'private_accounts',id)); };
+        
+        // STANDARD LOGIC
         document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
         document.getElementById('btn-register').onclick = async () => { try { await createUserWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
         document.getElementById('btn-logout').onclick = () => signOut(auth);
-
         window.switchTab = (tab) => { document.querySelectorAll('section[id^="tab-"]').forEach(s => s.classList.add('hidden')); document.getElementById('tab-'+tab).classList.remove('hidden'); document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active')); document.getElementById('nav-'+tab).classList.add('nav-active'); };
         window.switchPrivateTab = (sub) => { document.getElementById('view-private-outfits').classList.add('hidden'); document.getElementById('view-private-wishlist').classList.add('hidden'); document.getElementById('view-private-accounts').classList.add('hidden'); document.getElementById('view-private-'+sub).classList.remove('hidden'); document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('sub-tab-active')); document.getElementById('sub-'+sub).classList.add('sub-tab-active'); };
         window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
@@ -203,109 +193,50 @@
         window.setPrivateFilter = (cat) => { currentPrivateFilter = cat; document.querySelectorAll('#view-private-outfits .filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('p-filter-'+cat).classList.add('filter-active'); renderPrivateInspos(); };
 
         document.getElementById('btn-create').onclick = async () => { const name = document.getElementById('event-name').value; if (!name) return alert("Nom ?"); await addDoc(collection(db, 'events'), { name: name, date: document.getElementById('event-date').value, dressCode: document.getElementById('event-dress').value, creator: currentUser.email, createdAt: Date.now(), participants: [currentUser.email.split('@')[0]] }); document.getElementById('event-name').value = ""; alert("✅ Créé !"); };
-
         function loadEvents() { onSnapshot(query(collection(db, 'events'), orderBy('date', 'asc')), (snap) => { const list = document.getElementById('events-list'); list.innerHTML = ""; document.getElementById('event-count').innerText = snap.size; let closestEvent = null; const now = new Date(); now.setHours(0,0,0,0); snap.forEach(d => { const data = d.data(); const participants = data.participants || []; const isParticipating = participants.includes(currentUser.email.split('@')[0]); const isCreator = data.creator === currentUser.email; if(data.date) { const evtDate = new Date(data.date); if(evtDate >= now && (!closestEvent || evtDate < closestEvent.date)) closestEvent = { name: data.name, date: evtDate }; } const div = document.createElement('div'); div.className = "card border-l-4 border-pink-400 active:scale-95 transition cursor-pointer relative overflow-hidden"; div.innerHTML = `<div class="flex justify-between items-start mb-2"><h3 class="font-black text-lg text-pink-900 capitalize flex-1">${data.name}</h3>${isCreator ? `<button class="btn-settings text-slate-300 hover:text-pink-500 px-2" onclick="openEditEvent('${d.id}', '${data.name}', '${data.date}', '${data.dressCode}')">⚙️</button>`:''}<button class="btn-part text-[9px] font-bold uppercase px-3 py-1.5 rounded-full border shadow-sm ${isParticipating ? 'bg-green-100 text-green-700 border-green-200' : 'bg-white text-slate-400 border-slate-200 hover:bg-green-50'}">${isParticipating ? '✅ J\'y vais' : '🤍 Rejoindre'}</button></div><div class="flex gap-2 text-xs text-pink-400 font-bold mb-3"><span class="bg-pink-50 px-2 py-1 rounded-md">📅 ${data.date||'...'}</span><span class="bg-pink-50 px-2 py-1 rounded-md">👗 ${data.dressCode||'Libre'}</span></div><div class="flex flex-wrap gap-1 mt-1">${participants.length > 0 ? participants.map(p => `<span class="text-[9px] bg-pink-50 text-pink-600 px-2 py-1 rounded-full border border-pink-100 font-bold">${p}</span>`).join('') : '<span class="text-[9px] text-slate-300 italic pl-1">Aucune participante...</span>'}</div>`; div.onclick = (e) => { if(!e.target.closest('.btn-part') && !e.target.closest('.btn-settings')) openModal(d.id, data.name, false); }; div.querySelector('.btn-part').onclick = async () => { const ref = doc(db, 'events', d.id); const name = currentUser.email.split('@')[0]; if(isParticipating) await updateDoc(ref, { participants: arrayRemove(name) }); else await updateDoc(ref, { participants: arrayUnion(name) }); }; list.appendChild(div); }); if(closestEvent) { const diff = Math.ceil((closestEvent.date - now) / (1000 * 60 * 60 * 24)); document.getElementById('next-event-name').innerText = closestEvent.name; document.getElementById('days-left').innerText = diff; document.getElementById('countdown-card').classList.remove('hidden'); } else document.getElementById('countdown-card').classList.add('hidden'); lucide.createIcons(); }); }
+        
+        function loadPrivateDressing() { onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid)), (snap) => { allPrivateInspos = []; snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); }); allPrivateInspos.sort((a,b)=>b.createdAt-a.createdAt); renderPrivateInspos(); }); }
+        function renderPrivateInspos() { const grid = document.getElementById('private-grid'); grid.innerHTML = ""; const filtered = allPrivateInspos.filter(i => currentPrivateFilter === 'all' || i.category === currentPrivateFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Vide...</div>"; return; } filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, true)); }); lucide.createIcons(); }
 
         window.openEditEvent = (id, name, date, dress) => { eventToEditId = id; document.getElementById('edit-event-name').value = name; document.getElementById('edit-event-date').value = date; document.getElementById('edit-event-dress').value = dress; document.getElementById('modal-edit-event').classList.remove('hidden'); };
         window.saveEventEdit = async () => { if(eventToEditId) { await updateDoc(doc(db,'events',eventToEditId), { name: document.getElementById('edit-event-name').value, date: document.getElementById('edit-event-date').value, dressCode: document.getElementById('edit-event-dress').value }); document.getElementById('modal-edit-event').classList.add('hidden'); } };
         window.deleteEvent = async () => { if(eventToEditId && confirm("Supprimer définitivement ?")) { await deleteDoc(doc(db,'events',eventToEditId)); document.getElementById('modal-edit-event').classList.add('hidden'); } };
-
-        // --- FIX VISIBILITÉ PRIVÉ (SUPPRESSION DU TRI SERVEUR) ---
-        function loadPrivateDressing() { 
-            onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid)), (snap) => { 
-                allPrivateInspos = []; 
-                snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); });
-                // Tri manuel en JS pour éviter les bugs d'index
-                allPrivateInspos.sort((a,b) => b.createdAt - a.createdAt);
-                renderPrivateInspos(); 
-            }); 
-        }
-        function renderPrivateInspos() { const grid = document.getElementById('private-grid'); grid.innerHTML = ""; const filtered = allPrivateInspos.filter(i => currentPrivateFilter === 'all' || i.category === currentPrivateFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Rien ici... ✨</div>"; return; } filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, true)); }); lucide.createIcons(); }
-
         window.handleWishUpload = (input) => { const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);wishBase64=c.toDataURL("image/jpeg",0.4);document.getElementById('wish-status').innerText="✅ OK";document.getElementById('wish-status').classList.remove('hidden');};i.src=e.target.result;};r.readAsDataURL(f);};
         window.addWish = async () => { const n=document.getElementById('wish-name').value; const l=document.getElementById('wish-link').value; if(!n || (!l && !wishBase64)) return alert("Nom + Lien/Photo requis !"); await addDoc(collection(db, 'private_wishlist'), { uid: currentUser.uid, name: n, link: l, image: wishBase64, createdAt: Date.now() }); document.getElementById('wish-name').value=""; document.getElementById('wish-link').value=""; document.getElementById('wish-upload').value=""; wishBase64=null; document.getElementById('wish-status').classList.add('hidden'); };
-        // FIX WISH LIST (TRI JS)
-        function loadWishlist() { onSnapshot(query(collection(db, 'private_wishlist'), where('uid','==',currentUser.uid)), (snap) => { const g=document.getElementById('wishlist-grid'); g.innerHTML=""; let items=[]; snap.forEach(d => items.push({id:d.id, ...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { g.innerHTML+=`<div class="bg-white rounded-xl shadow-sm p-2 text-center border border-pink-50 relative"><button onclick="deleteDoc(doc(db,'private_wishlist','${da.id}'))" class="absolute top-1 right-1 text-red-300 font-bold text-xs">x</button>${da.image?`<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">`:''}<div class="font-bold text-xs text-slate-800 truncate">${da.name}</div>${da.link?`<a href="${da.link}" target="_blank" class="text-[9px] text-pink-500 font-bold uppercase">Acheter</a>`:''}</div>`; }); }); }
-
+        
+        // FIX WISH DELETE
+        function loadWishlist() { onSnapshot(query(collection(db, 'private_wishlist'), where('uid','==',currentUser.uid)), (snap) => { const g=document.getElementById('wishlist-grid'); g.innerHTML=""; let items=[]; snap.forEach(d => items.push({id:d.id, ...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { g.innerHTML+=`<div class="bg-white rounded-xl shadow-sm p-2 text-center border border-pink-50 relative"><button onclick="deleteWish('${da.id}')" class="absolute top-1 right-1 text-red-300 font-bold text-xs">x</button>${da.image?`<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">`:''}<div class="font-bold text-xs text-slate-800 truncate">${da.name}</div>${da.link?`<a href="${da.link}" target="_blank" class="text-[9px] text-pink-500 font-bold uppercase">Acheter</a>`:''}</div>`; }); }); }
+        
         window.addAccount = async () => { const n=document.getElementById('acc-name').value; const l=document.getElementById('acc-link').value; if(n&&l) await addDoc(collection(db, 'private_accounts'), { uid: currentUser.uid, name: n, link: l, createdAt: Date.now() }); document.getElementById('acc-name').value=""; document.getElementById('acc-link').value=""; };
-        // FIX ACCOUNTS (TRI JS)
-        function loadAccounts() { onSnapshot(query(collection(db, 'private_accounts'), where('uid','==',currentUser.uid)), (snap) => { const l=document.getElementById('accounts-list'); l.innerHTML=""; let items=[]; snap.forEach(d => items.push({id:d.id, ...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { l.innerHTML+=`<div class="flex justify-between items-center bg-white p-3 rounded-xl border border-pink-50"><div class="flex items-center gap-2"><div class="bg-indigo-100 p-2 rounded-full text-indigo-500"><i data-lucide="smartphone" class="w-4 h-4"></i></div><a href="${da.link}" target="_blank" class="font-bold text-xs text-indigo-900">${da.name}</a></div><button onclick="deleteDoc(doc(db,'private_accounts','${da.id}'))" class="text-xs text-slate-300">Suppr</button></div>`; }); lucide.createIcons(); }); }
+        
+        // FIX ACCOUNT DELETE
+        function loadAccounts() { onSnapshot(query(collection(db, 'private_accounts'), where('uid','==',currentUser.uid)), (snap) => { const l=document.getElementById('accounts-list'); l.innerHTML=""; let items=[]; snap.forEach(d => items.push({id:d.id, ...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { l.innerHTML+=`<div class="flex justify-between items-center bg-white p-3 rounded-xl border border-pink-50"><div class="flex items-center gap-2"><div class="bg-indigo-100 p-2 rounded-full text-indigo-500"><i data-lucide="smartphone" class="w-4 h-4"></i></div><a href="${da.link}" target="_blank" class="font-bold text-xs text-indigo-900">${da.name}</a></div><button onclick="deleteAccount('${da.id}')" class="text-xs text-slate-300">Suppr</button></div>`; }); lucide.createIcons(); }); }
 
-        // --- GROUPES ---
         window.createGroup = async () => { const n=document.getElementById('new-group-name').value; if(n) await addDoc(collection(db, 'groups'), { name:n, admin:currentUser.uid, members:[currentUser.uid], createdAt:Date.now() }); document.getElementById('new-group-name').value=""; };
         window.joinGroup = async () => { const c=document.getElementById('join-group-code').value; if(!c) return alert("Code?"); try { const g=await getDoc(doc(db,'groups',c)); if(g.exists()){ await updateDoc(doc(db,'groups',c),{members:arrayUnion(currentUser.uid)}); alert("Rejoint !"); document.getElementById('join-group-code').value=""; } else alert("Groupe introuvable"); } catch(e){alert("Erreur code");} };
-        
         function loadGroups() { onSnapshot(query(collection(db, 'groups'), where('members', 'array-contains', currentUser.uid)), (snap) => { const l=document.getElementById('my-groups-list'); l.innerHTML=""; snap.forEach(d => { const da=d.data(); l.innerHTML+=`<div onclick="openGroup('${d.id}','${da.name}')" class="group-card"><div class="flex-1"><h3 class="font-bold text-pink-900">${da.name}</h3><p class="text-[10px] text-slate-400">Code: ${d.id}</p></div><i data-lucide="chevron-right" class="text-pink-300 w-4 h-4"></i></div>`; }); lucide.createIcons(); }); }
-        
         window.openGroup = (id, name) => { currentGroupId = id; document.getElementById('chat-title').innerText = name; document.getElementById('chat-code').innerText = "Code: " + id; document.getElementById('view-groups-list').classList.add('hidden'); document.getElementById('view-group-chat').classList.remove('hidden'); loadChat(); };
         window.closeGroupChat = () => { currentGroupId = null; document.getElementById('view-groups-list').classList.remove('hidden'); document.getElementById('view-group-chat').classList.add('hidden'); };
         window.copyCode = () => { navigator.clipboard.writeText(currentGroupId); alert("Code copié !"); };
-
         window.sendChat = async () => { const t=document.getElementById('chat-input').value; if(t&&currentGroupId) { await addDoc(collection(db,'messages'),{groupId:currentGroupId, text:t, user:currentUser.email.split('@')[0], email:currentUser.email, date:Date.now()}); document.getElementById('chat-input').value=""; } };
-        
-        // --- SONDAGES DANS LE GROUPE ---
-        window.askPoll = async () => {
-            const q = prompt("Question du sondage ?");
-            if(q && currentGroupId) {
-                await addDoc(collection(db, 'messages'), { // On utilise 'messages'
-                    groupId: currentGroupId,
-                    type: 'poll',
-                    question: q,
-                    votes: { yes: [], no: [] },
-                    user: currentUser.email.split('@')[0],
-                    email: currentUser.email,
-                    date: Date.now()
-                });
-            }
-        };
-
+        window.askPoll = async () => { const q = prompt("Question du sondage ?"); if(q && currentGroupId) { await addDoc(collection(db, 'messages'), { groupId: currentGroupId, type: 'poll', question: q, votes: { yes: [], no: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); } };
         window.openVSModal = () => document.getElementById('modal-vs').classList.remove('hidden');
         window.previewVS = (num, input) => { const f=input.files[0]; if(!f) return; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');const ctx=c.getContext('2d');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;ctx.drawImage(i,0,0,w,h);const b64=c.toDataURL("image/jpeg",0.4);document.getElementById(`vs-preview-${num}`).innerHTML="";document.getElementById(`vs-preview-${num}`).style.backgroundImage=`url(${b64})`;document.getElementById(`vs-preview-${num}`).classList.add('vs-img-filled');if(num===1)vsImg1=b64;else vsImg2=b64;};i.src=e.target.result;};r.readAsDataURL(f);};
-        
-        window.sendVS = async () => {
-            if(!vsImg1 || !vsImg2) return alert("Choisis 2 photos !");
-            if(currentGroupId) {
-                await addDoc(collection(db, 'messages'), { // On utilise 'messages'
-                    groupId: currentGroupId,
-                    type: 'vs',
-                    img1: vsImg1,
-                    img2: vsImg2,
-                    votes: { v1: [], v2: [] },
-                    user: currentUser.email.split('@')[0],
-                    email: currentUser.email,
-                    date: Date.now()
-                });
-            }
-            document.getElementById('modal-vs').classList.add('hidden'); vsImg1=null; vsImg2=null;
-            document.querySelectorAll('.vs-preview').forEach(el=>{el.style.backgroundImage='none';el.classList.remove('vs-img-filled');el.innerHTML='<span class="text-xs font-bold text-slate-400">PHOTO</span>'});
-        };
-
-        // FIX CHAT (TRI JS POUR EVITER LE BUG D'INDEX)
-        function loadChat() { 
-            if(!currentGroupId) return; 
-            onSnapshot(query(collection(db,'messages'), where('groupId','==',currentGroupId)), (snap)=>{ 
-                const b=document.getElementById('chat-box'); 
-                let msgs = [];
-                snap.forEach(doc => msgs.push({id:doc.id, ...doc.data()}));
-                msgs.sort((a,b) => a.date - b.date); // Tri en mémoire
-
-                b.innerHTML = msgs.map(da => {
-                    const me=da.email===currentUser.email; 
-                    if(da.type==='poll') { const y=(da.votes.yes||[]).length,n=(da.votes.no||[]).length,t=y+n,p=t===0?50:(y/t)*100; return `<div class="mb-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-100"><div class="text-[10px] font-bold text-indigo-400 mb-1">SONDAGE DE ${da.user}</div><h3 class="font-bold text-indigo-900 mb-3 text-sm">${da.question}</h3><div class="flex gap-1 h-8 rounded-lg overflow-hidden"><div onclick="vote('${da.id}','yes')" class="bg-green-400 flex items-center justify-center text-white font-bold text-[10px]" style="width:${p}%">OUI (${y})</div><div onclick="vote('${da.id}','no')" class="bg-red-400 flex items-center justify-center text-white font-bold text-[10px] flex-1">NON (${n})</div></div></div>`; }
-                    if(da.type==='vs') { const v1=(da.votes.v1||[]).length,v2=(da.votes.v2||[]).length; return `<div class="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-pink-100"><div class="text-[10px] font-bold text-pink-400 mb-2 text-center">DUEL DE ${da.user} 🔥</div><div class="flex gap-2"><div onclick="voteVS('${da.id}','v1')" class="flex-1 relative cursor-pointer"><img src="${da.img1}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v1}</div></div><div class="flex items-center text-xs font-black text-slate-300">VS</div><div onclick="voteVS('${da.id}','v2')" class="flex-1 relative cursor-pointer"><img src="${da.img2}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v2}</div></div></div></div>`; }
-                    return `<div class="flex flex-col ${me?'items-end':'items-start'} mb-1"><span class="text-[9px] text-pink-400 font-bold px-1">${da.user}</span><div class="${me?'bg-pink-500 text-white rounded-br-none':'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${da.text}</div></div>`; 
-                }).join(''); 
-                b.scrollTop=b.scrollHeight; 
-            }); 
-        }
-
+        window.sendVS = async () => { if(!vsImg1||!vsImg2)return alert("2 photos !"); if(currentGroupId) { await addDoc(collection(db, 'messages'), { groupId: currentGroupId, type: 'vs', img1: vsImg1, img2: vsImg2, votes: { v1: [], v2: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); } document.getElementById('modal-vs').classList.add('hidden'); vsImg1=null; vsImg2=null; document.querySelectorAll('.vs-preview').forEach(el=>{el.style.backgroundImage='none';el.classList.remove('vs-img-filled');el.innerHTML='<span class="text-xs font-bold text-slate-400">PHOTO</span>'}); };
+        function loadChat() { if(!currentGroupId) return; onSnapshot(query(collection(db,'messages'), where('groupId','==',currentGroupId)), (snap)=>{ const b=document.getElementById('chat-box'); let msgs = []; snap.forEach(doc => msgs.push({id:doc.id, ...doc.data()})); msgs.sort((a,b) => a.date - b.date); b.innerHTML = msgs.map(da => { const me=da.email===currentUser.email; if(da.type==='poll') { const y=(da.votes.yes||[]).length,n=(da.votes.no||[]).length,t=y+n,p=t===0?50:(y/t)*100; return `<div class="mb-4 bg-white p-4 rounded-2xl shadow-sm border border-indigo-100"><div class="text-[10px] font-bold text-indigo-400 mb-1">SONDAGE DE ${da.user}</div><h3 class="font-bold text-indigo-900 mb-3 text-sm">${da.question}</h3><div class="flex gap-1 h-8 rounded-lg overflow-hidden"><div onclick="vote('${da.id}','yes')" class="bg-green-400 flex items-center justify-center text-white font-bold text-[10px]" style="width:${p}%">OUI (${y})</div><div onclick="vote('${da.id}','no')" class="bg-red-400 flex items-center justify-center text-white font-bold text-[10px] flex-1">NON (${n})</div></div></div>`; } if(da.type==='vs') { const v1=(da.votes.v1||[]).length,v2=(da.votes.v2||[]).length; return `<div class="mb-4 bg-white p-3 rounded-2xl shadow-sm border border-pink-100"><div class="text-[10px] font-bold text-pink-400 mb-2 text-center">DUEL DE ${da.user} 🔥</div><div class="flex gap-2"><div onclick="voteVS('${da.id}','v1')" class="flex-1 relative cursor-pointer"><img src="${da.img1}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v1}</div></div><div class="flex items-center text-xs font-black text-slate-300">VS</div><div onclick="voteVS('${da.id}','v2')" class="flex-1 relative cursor-pointer"><img src="${da.img2}" class="vs-img"><div class="absolute bottom-1 right-1 bg-black/60 text-white text-[10px] font-bold px-2 rounded-full">Vote: ${v2}</div></div></div></div>`; } return `<div class="flex flex-col ${me?'items-end':'items-start'} mb-1"><span class="text-[9px] text-pink-400 font-bold px-1">${da.user}</span><div class="${me?'bg-pink-500 text-white rounded-br-none':'bg-white text-pink-900 border border-pink-100 rounded-bl-none'} px-4 py-2 rounded-2xl text-xs max-w-[85%] shadow-sm">${da.text}</div></div>`; }).join(''); b.scrollTop=b.scrollHeight; }); }
         window.vote = async (id, c) => { const r=doc(db,'messages',id);const u=currentUser.email.split('@')[0];if(c==='yes')await updateDoc(r,{"votes.yes":arrayUnion(u),"votes.no":arrayRemove(u)});else await updateDoc(r,{"votes.no":arrayUnion(u),"votes.yes":arrayRemove(u)}); };
         window.voteVS = async (id, c) => { const r=doc(db,'messages',id);const u=currentUser.email.split('@')[0];if(c==='v1')await updateDoc(r,{"votes.v1":arrayUnion(u),"votes.v2":arrayRemove(u)});else await updateDoc(r,{"votes.v2":arrayUnion(u),"votes.v1":arrayRemove(u)}); };
 
         window.openModal = (id, name, isPrivate) => { currentEventId = id; isPrivateMode = isPrivate; document.getElementById('modal-title').innerText = name; document.getElementById('modal-event').classList.remove('hidden'); if(isPrivate) { document.getElementById('filter-bar').classList.add('hidden'); document.getElementById('inspo-grid').innerHTML = ""; document.getElementById('inspo-grid').classList.add('hidden'); } else { document.getElementById('filter-bar').classList.remove('hidden'); document.getElementById('inspo-grid').classList.remove('hidden'); currentFilter = 'all'; document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('filter-active')); document.getElementById('filter-all').classList.add('filter-active'); onSnapshot(query(collection(db, 'events', id, 'inspos'), orderBy('createdAt', 'desc')), (snap) => { allInspos = []; snap.forEach(docSnap => { allInspos.push({ id: docSnap.id, ...docSnap.data() }); }); renderInspos(); }); } };
         window.handleMainUpload = (input) => { const f=input.files[0]; if(!f) return; document.getElementById('upload-text').innerText = "..."; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);pendingBase64=c.toDataURL("image/jpeg",0.4);document.getElementById('upload-text').innerText="PRÊT !";};i.src=e.target.result;};r.readAsDataURL(f);};
 
-        document.getElementById('btn-submit-inspo').onclick = async () => { const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value; if(!finalUrl) return alert("Manque photo/lien !"); const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] }; try { await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); } };
+        // --- FIX : SPLIT COLLECTION REF ---
+        document.getElementById('btn-submit-inspo').onclick = async () => { const finalUrl = (uploadMode === 'photo' && pendingBase64) ? pendingBase64 : document.getElementById('inspo-link-url').value; if(!finalUrl) return alert("Manque photo/lien !"); const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] }; try { 
+            let ref;
+            if(isPrivateMode) ref = collection(db, 'private_dressing');
+            else ref = collection(db, 'events', currentEventId, 'inspos');
+            await addDoc(ref, data); 
+            document.getElementById('inspo-link-url').value = ""; document.getElementById('file-upload').value = ""; pendingBase64 = null; alert("✨ Posté !"); if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); } catch(e) { alert("Erreur: " + e.message); } };
 
         function renderInspos() { const grid = document.getElementById('inspo-grid'); grid.innerHTML = ""; const filtered = allInspos.filter(i => currentFilter === 'all' || i.category === currentFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10'>Vide...</div>"; return; } filtered.forEach(d => grid.appendChild(createInspoCard(d.id, d, false))); lucide.createIcons(); }
         window.cycleCat = async (id, cur, isP) => { const cs=['Tenue','Haut','Bas','Chaussures','Sac','Accessoire']; const n=cs[(cs.indexOf(cur)+1)%cs.length]; if(confirm(`Changer en ${n}?`)) { const docRef = isP ? doc(db, 'private_dressing', id) : doc(db, 'events', currentEventId, 'inspos', id); await updateDoc(docRef,{category:n}); } };
