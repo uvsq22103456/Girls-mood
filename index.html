@@ -127,8 +127,10 @@
         let vsImg1 = null; let vsImg2 = null; let eventToEditId = null;
 
         onAuthStateChanged(auth, (user) => {
-            if (user) { currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); loadEvents(); loadChat(); loadPrivateDressing(); loadWishlist(); loadAccounts(); } 
-            else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
+            if (user) { 
+                currentUser = user; document.getElementById('auth-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('flex'); 
+                loadEvents(); loadChat(); loadPrivateDressing(); loadWishlist(); loadAccounts();
+            } else { document.getElementById('auth-view').classList.remove('hidden'); document.getElementById('app-view').classList.add('hidden'); document.getElementById('app-view').classList.remove('flex'); }
         });
 
         document.getElementById('btn-login').onclick = async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } catch(e){ document.getElementById('auth-error').innerText = e.message; document.getElementById('auth-error').classList.remove('hidden'); } };
@@ -150,15 +152,27 @@
         window.saveEventEdit = async () => { if(eventToEditId) { await updateDoc(doc(db,'events',eventToEditId), { name: document.getElementById('edit-event-name').value, date: document.getElementById('edit-event-date').value, dressCode: document.getElementById('edit-event-dress').value }); document.getElementById('modal-edit-event').classList.add('hidden'); } };
         window.deleteEvent = async () => { if(eventToEditId && confirm("Supprimer définitivement ?")) { await deleteDoc(doc(db,'events',eventToEditId)); document.getElementById('modal-edit-event').classList.add('hidden'); } };
 
-        function loadPrivateDressing() { onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid), orderBy('createdAt', 'desc')), (snap) => { allPrivateInspos = []; snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); }); renderPrivateInspos(); }); }
+        // --- CORRECTION DU TRI FIREBASE (NO INDEX) ---
+        function loadPrivateDressing() { 
+            // On retire le orderBy pour éviter l'erreur d'index
+            onSnapshot(query(collection(db, 'private_dressing'), where('uid', '==', currentUser.uid)), (snap) => { 
+                allPrivateInspos = []; 
+                snap.forEach(d => { allPrivateInspos.push({ id: d.id, ...d.data() }); }); 
+                // On trie manuellement en JS
+                allPrivateInspos.sort((a, b) => b.createdAt - a.createdAt);
+                renderPrivateInspos(); 
+            }); 
+        }
         function renderPrivateInspos() { const grid = document.getElementById('private-outfits-grid'); grid.innerHTML = ""; const filtered = allPrivateInspos.filter(i => currentPrivateFilter === 'all' || i.category === currentPrivateFilter); if(filtered.length === 0) { grid.innerHTML = "<div class='text-center opacity-40 text-xs font-bold mt-10 p-10 bg-indigo-50 rounded-xl text-indigo-400'>Vide...</div>"; return; } filtered.forEach(d => { grid.appendChild(createInspoCard(d.id, d, true)); }); lucide.createIcons(); }
 
         window.handleWishUpload = (input) => { const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=(e)=>{const i=new Image();i.onload=()=>{const c=document.createElement('canvas');let w=i.width,h=i.height,m=600;if(w>h){if(w>m){h*=m/w;w=m}}else{if(h>m){w*=m/h;h=m}}c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);wishBase64=c.toDataURL("image/jpeg",0.5);document.getElementById('wish-status').classList.remove('hidden');};i.src=e.target.result;};r.readAsDataURL(f);};
-        window.addWish = async () => { const n=document.getElementById('wish-name').value; const l=document.getElementById('wish-link').value; if(!n || (!l && !wishBase64)) return alert("Nom + Lien/Photo requis !"); await addDoc(collection(db, 'private_wishlist'), { uid: currentUser.uid, name: n, link: l, image: wishBase64, createdAt: Date.now() }); document.getElementById('wish-name').value=""; document.getElementById('wish-link').value=""; document.getElementById('wish-upload').value=""; wishBase64=null; document.getElementById('wish-status').classList.add('hidden'); };
-        function loadWishlist() { onSnapshot(query(collection(db, 'private_wishlist'), where('uid','==',currentUser.uid), orderBy('createdAt','desc')), (snap) => { const g=document.getElementById('wishlist-grid'); g.innerHTML=""; snap.forEach(d => { const da=d.data(); g.innerHTML+=`<div class="bg-white rounded-xl shadow-sm p-2 text-center border border-pink-50 relative"><button onclick="deleteDoc(doc(db,'private_wishlist','${d.id}'))" class="absolute top-1 right-1 text-red-300 font-bold text-xs">x</button>${da.image?`<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">`:''}<div class="font-bold text-xs text-slate-800 truncate">${da.name}</div>${da.link?`<a href="${da.link}" target="_blank" class="text-[9px] text-pink-500 font-bold uppercase">Acheter</a>`:''}</div>`; }); }); }
+        window.addWish = async () => { const n=document.getElementById('wish-name').value; const l=document.getElementById('wish-link').value; if(!n) return alert("Nom requis !"); await addDoc(collection(db, 'private_wishlist'), { uid: currentUser.uid, name: n, link: l, image: wishBase64, createdAt: Date.now() }); document.getElementById('wish-name').value=""; document.getElementById('wish-link').value=""; document.getElementById('wish-upload').value=""; wishBase64=null; document.getElementById('wish-status').classList.add('hidden'); };
+        // CORRECTION TRI WISHLIST
+        function loadWishlist() { onSnapshot(query(collection(db, 'private_wishlist'), where('uid','==',currentUser.uid)), (snap) => { const g=document.getElementById('wishlist-grid'); g.innerHTML=""; let items=[]; snap.forEach(d=>items.push({id:d.id, ...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { g.innerHTML+=`<div class="bg-white rounded-xl shadow-sm p-2 text-center border border-pink-50 relative"><button onclick="deleteDoc(doc(db,'private_wishlist','${da.id}'))" class="absolute top-1 right-1 text-red-300 font-bold text-xs">x</button>${da.image?`<img src="${da.image}" class="w-full h-24 object-cover rounded-lg mb-2">`:''}<div class="font-bold text-xs text-slate-800 truncate">${da.name}</div>${da.link?`<a href="${da.link}" target="_blank" class="text-[9px] text-pink-500 font-bold uppercase">Acheter</a>`:''}</div>`; }); }); }
 
         window.addAccount = async () => { const n=document.getElementById('acc-name').value; const l=document.getElementById('acc-link').value; if(n&&l) await addDoc(collection(db, 'private_accounts'), { uid: currentUser.uid, name: n, link: l, createdAt: Date.now() }); document.getElementById('acc-name').value=""; document.getElementById('acc-link').value=""; };
-        function loadAccounts() { onSnapshot(query(collection(db, 'private_accounts'), where('uid','==',currentUser.uid), orderBy('createdAt','desc')), (snap) => { const l=document.getElementById('accounts-list'); l.innerHTML=""; snap.forEach(d => { const da=d.data(); l.innerHTML+=`<div class="flex justify-between items-center bg-white p-3 rounded-xl border border-pink-50"><a href="${da.link}" target="_blank" class="font-bold text-xs text-indigo-900">${da.name}</a><button onclick="deleteDoc(doc(db,'private_accounts','${d.id}'))" class="text-xs text-slate-300">Suppr</button></div>`; }); }); }
+        // CORRECTION TRI ACCOUNTS
+        function loadAccounts() { onSnapshot(query(collection(db, 'private_accounts'), where('uid','==',currentUser.uid)), (snap) => { const l=document.getElementById('accounts-list'); l.innerHTML=""; let items=[]; snap.forEach(d=>items.push({id:d.id,...d.data()})); items.sort((a,b)=>b.createdAt-a.createdAt); items.forEach(da => { l.innerHTML+=`<div class="flex justify-between items-center bg-white p-3 rounded-xl border border-pink-50"><a href="${da.link}" target="_blank" class="font-bold text-xs text-indigo-900">${da.name}</a><button onclick="deleteDoc(doc(db,'private_accounts','${da.id}'))" class="text-xs text-slate-300">Suppr</button></div>`; }); }); }
 
         document.getElementById('btn-send-chat').onclick = async () => { const txt = document.getElementById('chat-input').value; if(txt) { await addDoc(collection(db, 'chat'), { text: txt, type: 'text', user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); document.getElementById('chat-input').value = ""; } };
         window.askPoll = async () => { const q = prompt("Question du sondage ?"); if(q) await addDoc(collection(db, 'chat'), { type: 'poll', question: q, votes: { yes: [], no: [] }, user: currentUser.email.split('@')[0], email: currentUser.email, date: Date.now() }); };
@@ -208,10 +222,14 @@
             if(!finalUrl) return alert("Manque photo/lien !");
             const data = { url: finalUrl, shop: document.getElementById('inspo-shop-link').value, category: document.getElementById('inspo-category').value, user: currentUser.email.split('@')[0], email: currentUser.email, uid: currentUser.uid, createdAt: Date.now(), likes: [], comments: [] };
             try { 
-                await addDoc(collection(db, isPrivateMode ? 'private_dressing' : 'events', isPrivateMode ? null : currentEventId, isPrivateMode ? null : 'inspos'), data); 
+                if(isPrivateMode) {
+                    await addDoc(collection(db, 'private_dressing'), data);
+                } else {
+                    await addDoc(collection(db, 'events', currentEventId, 'inspos'), data);
+                }
+                
                 alert("✨ Posté !"); 
                 if(isPrivateMode) document.getElementById('modal-event').classList.add('hidden'); 
-                // Reset (encore pour être sûr)
                 pendingBase64 = null;
                 document.getElementById('upload-text').innerText = "GALERIE";
             } catch(e) { alert("Erreur: " + e.message); }
